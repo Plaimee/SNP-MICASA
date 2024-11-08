@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .wrap-items-center {
+    @apply flex flex-wrap items-center justify-center;
+  }
+}
