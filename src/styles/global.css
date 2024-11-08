@@ -6,4 +6,12 @@
   .wrap-items-center {
     @apply flex flex-wrap items-center justify-center;
   }
+
+  .btn-main {
+    @apply;
+  }
+
+  .btn-sub {
+    @apply;
+  }
 }
