@@ -17,4 +17,14 @@ export interface TextFieldTypes {
     pattern?: string;
     touched?: any;
     error?: any;
-  }
+}
+
+export interface IFile {
+  file: File | string;
+  filename: string
+}
+
+export interface IOptionDDL {
+  id: string;
+  name: string
+}

@@ -1,4 +1,4 @@
-import { Link, /* useNavigate */ } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { ChangeEvent, useState } from "react";
 import * as Yup from "Yup";
@@ -11,7 +11,7 @@ export interface IFormInitial {
 }
 
 export default function LoginPage() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
 
   async function submitForm(values: IFormInitial) {
@@ -19,11 +19,12 @@ export default function LoginPage() {
     console.log(values); // call api
     // const res = await Authenticate(values)
     // if (res && res.statusCode === 200 && res.taskStatus) {
-    //   navigate('/home')
+    
     // } else {
     //   // alert
     // }
     setLoading(false);
+    navigate('/home')
   }
 
   function validate() {
@@ -46,7 +47,7 @@ export default function LoginPage() {
         email: '',
         password: '',
       }}
-      onSubmit={(values) => submitForm(values)}
+      onSubmit={(values:IFormInitial) => submitForm(values)}
       >
         {({ setFieldValue, values, touched, errors }) => 
         <Form>
