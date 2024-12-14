@@ -1,17 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  span {
+    @apply text-[12px];
+  }
+}
+
 @layer components {
   .wrap-items-center {
-    @apply flex flex-wrap items-center justify-center;
+    @apply flex flex-wrap items-center justify-center w-full;
+  }
+
+  .container-button {
+    @apply w-full flex items-center pad-main;
+  }
+
+  .btn-base {
+    @apply flex items-center justify-center rounded-md p-3;
+  }
+
+  .btn-bfl {
+    @apply w-full btn-base;
+  }
+
+  .btn-bft {
+    @apply w-fit btn-base;
   }
 
   .btn-main {
-    @apply;
+    @apply bg-org-main text-white font-medium;
   }
 
   .btn-sub {
     @apply;
+  }
+
+  .input-group {
+    @apply mb-3 flex flex-col;
+  }
+
+  .inputDefault {
+    @apply border-2 rounded-[5px] p-2 text-[14px] border-org-main outline-none focus:shadow-md focus:shadow-org-main;
+  }
+
+  .inputSuccess {
+    @apply border-2 rounded-[5px] p-2 text-[14px] border-green-500 outline-none focus:shadow-md focus:shadow-green-500;
+  }
+
+  .inputError {
+    @apply border-2 rounded-[5px] p-2 text-[14px] border-red-main outline-none focus:shadow-md focus:shadow-red-main;
+  }
+
+  .pad-main {
+    @apply pt-3 px-5;
   }
 }
