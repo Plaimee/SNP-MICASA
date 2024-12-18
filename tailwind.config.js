@@ -13,6 +13,15 @@ export default {
       fontFamily: {
         sans: ['"IBM Plex Sans Thai"', 'sans-serif']
       },
+      fontSize: {
+        'h1': '32px',
+        'h2': '24px',
+        'h3': '20px',
+        'body1': '18px',
+        'body2': '16px',
+        'body3': '14px',
+        'small': '12px',
+      }
     },
   },
   plugins: [],
