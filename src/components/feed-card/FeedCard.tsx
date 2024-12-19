@@ -17,7 +17,7 @@ export interface IDataFeedCard {
 
 export default function FeedCard({ data }: IFeedCard) {
     return (
-        <div className="flex flex-col border border-gray/50 rounded-md shadow-lg mb-2">
+        <div className="flex flex-col border border-gray/20 rounded-md shadow-md mb-2">
             <div className="pad-main space-y-2">
                 <div className="flex flex-row w-full space-x-2">
                     <div className="">

@@ -12,9 +12,16 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="relative flex justify-between items-center bg-white w-full h-14 px-5">
-      <div className="flex items-center space-x-2">
+    <nav className="relative flex justify-between items-center bg-white w-full pad-main space-x-2">
+      <div className="flex items-center">
         <span className="text-xl font-bold text-gray-800">YourApp</span>
+      </div>
+
+      <div className="flex w-full border border-org-main rounded-md justify-between">
+        <input type="text" placeholder="ค้นหา" className="rounded-md p-1 text-small" />
+        <button className="btn-btf px-3 bg-org-main rounded-md">
+          <i className="fa-solid fa-magnifying-glass text-small text-white"></i>
+        </button>
       </div>
 
       <button
@@ -32,7 +39,7 @@ export default function Navigation() {
         {/* Close Icon (X) */}
         <div className={`${!showMenu ? "hidden" : "block"}`}>
           <span
-            className="text-lg font-bold cursor-pointer"
+            className="text-lg font-bold cursor-pointer px-[10px]"
             onClick={() => setShowMenu(false)} // ปิดเมนู
           >
             X
