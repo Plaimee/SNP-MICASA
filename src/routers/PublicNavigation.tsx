@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import Logo from "@/assets/Logo.png"
 
-export default function Navigation() {
+export default function PublicNavigation() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const location = useLocation();
-  const { pathname } = location;
 
   // ปิดเมนูเมื่อคลิกที่พื้นหลัง
   const handleOutsideClick = (event: React.MouseEvent) => {
@@ -18,13 +16,6 @@ export default function Navigation() {
     <nav className="relative flex justify-between items-center bg-white w-full pad-main space-x-2 shadow-sm pb-2">
       <div className="flex items-center w-10 h-10 me-3">
         <img src={Logo} alt="" />
-      </div>
-
-      <div className={`${pathname === "/home" ? "flex w-full border border-org-main rounded-md justify-between" : "hidden"}`}>
-        <input type="text" placeholder="ค้นหา" className="rounded-md p-1 text-small" />
-        <button className="btn-btf px-3 bg-org-main rounded-md">
-          <i className="fa-solid fa-magnifying-glass text-small text-white"></i>
-        </button>
       </div>
 
       <button
@@ -56,10 +47,9 @@ export default function Navigation() {
       >
         <div className="menu-container">
           <ul className="flex flex-col space-y-4 p-4 text-gray-800">
-            <li><NavLink to="/home" className="hover:text-blue-500">หน้าแรก</NavLink></li>
-            <li><NavLink to="/family" className="hover:text-blue-500">ครอบครัว</NavLink></li>
-            <li><NavLink to="/profile" className="hover:text-blue-500">โปรไฟล์</NavLink></li>
-            <li><NavLink to="/" className="hover:text-blue-500">ออกจากระบบ</NavLink></li>
+            <li><NavLink to="/" className="hover:text-blue-500">หน้าแรก</NavLink></li>
+            <li><NavLink to="/login" className="hover:text-blue-500">เข้าสู่ระบบ</NavLink></li>
+            <li><NavLink to="/register" className="hover:text-blue-500">สมัครสมาชิก</NavLink></li>
           </ul>
         </div>
       </div>

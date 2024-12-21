@@ -40,7 +40,7 @@ export default function Dropdown({ options, value, disabled = false, isMultiDefa
   const [data, setData] = useState<any>([]);
   const [searchKey, setSearchKey] = useState<string>("");
 
-useEffect(() => {
+  useEffect(() => {
     if (open) {
       document.getElementById(`search-${name}`)?.focus();
       if (options.length > 0) {

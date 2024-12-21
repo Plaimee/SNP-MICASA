@@ -47,7 +47,7 @@
   }
 
   .btn-sub {
-    @apply bg-white text-org-main font-medium border-org-main;
+    @apply bg-white text-org-main font-medium border border-org-main;
   }
 
   .input-group {

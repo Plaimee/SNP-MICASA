@@ -65,7 +65,7 @@ export default function MoreRegisterDetailPage() {
           const acceptedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
           return acceptedTypes.includes(value.type);
         })
-    })
+      })
     });
   }
 
@@ -85,7 +85,7 @@ export default function MoreRegisterDetailPage() {
     setLoading(true);
     console.log(data);
     setLoading(false);
-    navigate('/');
+    navigate('/login');
   }
   
   return (
