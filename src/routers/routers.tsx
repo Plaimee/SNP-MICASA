@@ -4,9 +4,9 @@ import {
   Route,
 } from "react-router-dom";
 
-import { publicRoutes, privateRoutes } from '@/routers/menu';
-import MainPrivateLayout from "./MainPrivateLayout";
-import MainPublicLayout from "./MainPublicLayout";
+import { publicRoutes, privateRoutes } from "@/routers/menu";
+import MainPrivateLayout from "../layouts/MainPrivateLayout";
+import MainPublicLayout from "../layouts/MainPublicLayout";
 
 const element = createRoutesFromElements(
   <>
@@ -20,8 +20,8 @@ const element = createRoutesFromElements(
     {/* private route */}
     <Route element={<MainPublicLayout />}>
       {publicRoutes.map((route, index) => (
-      <Route key={index} path={route.path} element={route.element} />
-    ))}
+        <Route key={index} path={route.path} element={route.element} />
+      ))}
     </Route>
 
     {/* private route */}

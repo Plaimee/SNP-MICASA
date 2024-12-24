@@ -7,6 +7,7 @@ import MoreRegisterDetailPage from "@/views/MoreRegisterDetailPage";
 import FamilyPage from "@/views/private/FamilyPage";
 import CreateFamilyPage from "@/views/private/CreateFamilyPage";
 import ProfilePage from "@/views/private/ProfilePage";
+import JoinFamilyPage from "@/views/private/JoinFamilyPage";
 
 export const publicRoutes: RouteObject[] = [
   { path: "*", element: <></> },
@@ -14,12 +15,12 @@ export const publicRoutes: RouteObject[] = [
   { path: "/", element: <Guest /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/register/more-detail", element: <MoreRegisterDetailPage /> },
-  
 ];
 
 export const privateRoutes: RouteObject[] = [
-  { path: "/home", element: <Home />, },
-  { path: "/family", element: <FamilyPage />},
-  { path: "/family/create", element: <CreateFamilyPage />},
-  { path: "/profile", element: <ProfilePage />},
+  { path: "/home", element: <Home /> },
+  { path: "/family", element: <FamilyPage /> },
+  { path: "/family/create", element: <CreateFamilyPage /> },
+  { path: "/family/join", element: <JoinFamilyPage /> },
+  { path: "/profile", element: <ProfilePage /> },
 ];
