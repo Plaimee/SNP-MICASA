@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import Logo from "@/assets/Logo.png"
+import Logo from "@/assets/Logo.png";
 
 export default function Navigation() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -20,8 +20,18 @@ export default function Navigation() {
         <img src={Logo} alt="" />
       </div>
 
-      <div className={`${pathname === "/home" ? "flex w-full border border-org-main rounded-md justify-between" : "hidden"}`}>
-        <input type="text" placeholder="ค้นหา" className="rounded-md p-1 text-small" />
+      <div
+        className={`${
+          pathname === "/home"
+            ? "flex w-full border border-org-main rounded-md justify-between"
+            : "hidden"
+        }`}
+      >
+        <input
+          type="text"
+          placeholder="ค้นหา"
+          className="rounded-md p-1 text-small"
+        />
         <button className="btn-btf px-3 bg-org-main rounded-md">
           <i className="fa-solid fa-magnifying-glass text-small text-white"></i>
         </button>
@@ -50,16 +60,36 @@ export default function Navigation() {
 
       {/* Menu */}
       <div
-        className={`${showMenu ? "absolute top-12 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden" : "hidden"}`}
+        className={`${
+          showMenu
+            ? "absolute top-12 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden"
+            : "hidden"
+        }`}
         aria-hidden="false"
         onClick={handleOutsideClick} // ตรวจจับการคลิกที่พื้นหลัง
       >
         <div className="menu-container">
           <ul className="flex flex-col space-y-4 p-4 text-gray-800">
-            <li><NavLink to="/home" className="hover:text-blue-500">หน้าแรก</NavLink></li>
-            <li><NavLink to="/family" className="hover:text-blue-500">ครอบครัว</NavLink></li>
-            <li><NavLink to="/profile" className="hover:text-blue-500">โปรไฟล์</NavLink></li>
-            <li><NavLink to="/" className="hover:text-blue-500">ออกจากระบบ</NavLink></li>
+            <li>
+              <NavLink to="/home" className="hover:text-blue-500">
+                หน้าแรก
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/family" className="hover:text-blue-500">
+                ครอบครัว
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/profile" className="hover:text-blue-500">
+                โปรไฟล์
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/" className="hover:text-blue-500">
+                ออกจากระบบ
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>
