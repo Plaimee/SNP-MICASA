@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Logo from "@/assets/Logo.png";
 
 export default function Navigation() {
@@ -7,88 +7,94 @@ export default function Navigation() {
   const location = useLocation();
   const { pathname } = location;
 
-  // ปิดเมนูเมื่อคลิกที่พื้นหลัง
+  const handleActivePage = (path: string) => {
+    return pathname === path
+      ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2"
+      : "text-black";
+  };
+
   const handleOutsideClick = (event: React.MouseEvent) => {
     if ((event.target as HTMLElement).closest(".menu-container") === null) {
-      setShowMenu(false);
+      setShowMenu(!showMenu);
     }
   };
 
   return (
-    <nav className="relative flex justify-between items-center bg-white w-full pad-main space-x-2 shadow-sm pb-2">
-      <div className="flex items-center w-10 h-10 me-3">
-        <img src={Logo} alt="" />
-      </div>
+    <nav className="relative pb-3 shadow-sm bg-white">
+      <div className="flex w-full justify-between pad-main">
+        <img className="flex w-10 h-10" src={Logo} alt="Logo" />
 
-      <div
-        className={`${
-          pathname === "/home"
-            ? "flex w-full border border-org-main rounded-md justify-between"
-            : "hidden"
-        }`}
-      >
-        <input
-          type="text"
-          placeholder="ค้นหา"
-          className="rounded-md p-1 text-small"
-        />
-        <button className="btn-btf px-3 bg-org-main rounded-md">
-          <i className="fa-solid fa-magnifying-glass text-small text-white"></i>
+        <div
+          className={`${
+            pathname === "/home"
+              ? "flex w-60 border border-org-main rounded-md"
+              : "hidden"
+          }`}
+        >
+          <input
+            type="text"
+            placeholder="ค้นหา"
+            className="w-full rounded-md focus:outline-none p-1 ps-3 text-small"
+          />
+          <button className="btn-bft btn-main">
+            <i className="fa-solid fa-magnifying-glass text-small text-white"></i>
+          </button>
+        </div>
+
+        <button
+          className="flex justify-center items-center text-center w-10 focus:outline-none md:hidden"
+          aria-label="Toggle menu"
+          onClick={() => setShowMenu(!showMenu)} // สลับสถานะเมนู
+        >
+          {/* Hamburger Icon */}
+          <div className={`${showMenu ? "hidden" : "flex"}`}>
+            <i className="fa-solid fa-bars text-h2"></i>
+          </div>
+
+          {/* Close Icon (X) */}
+          <div className={`${!showMenu ? "hidden" : "flex"}`}>
+            <i
+              className="fa-solid fa-x text-h2 cursor-pointer"
+              onClick={() => setShowMenu(false)}
+            ></i>
+          </div>
         </button>
       </div>
-
-      <button
-        className="p-2 w-10 h-10 focus:outline-none md:hidden flex items-center justify-center"
-        aria-label="Toggle menu"
-        onClick={() => setShowMenu(!showMenu)} // สลับสถานะเมนู
-      >
-        {/* Hamburger Icon */}
-        <div className={`${showMenu ? "hidden" : "space-y-1"}`}>
-          <i className="fa-solid fa-bars text-h2"></i>
-        </div>
-
-        {/* Close Icon (X) */}
-        <div className={`${!showMenu ? "hidden" : "block"}`}>
-          <span
-            className="text-lg font-bold cursor-pointer px-[10px] text-h2 w-10 h-10"
-            onClick={() => setShowMenu(false)} // ปิดเมนู
-          >
-            X
-          </span>
-        </div>
-      </button>
 
       {/* Menu */}
       <div
         className={`${
           showMenu
-            ? "absolute top-12 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden"
+            ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden"
             : "hidden"
         }`}
         aria-hidden="false"
         onClick={handleOutsideClick} // ตรวจจับการคลิกที่พื้นหลัง
       >
         <div className="menu-container">
-          <ul className="flex flex-col space-y-4 p-4 text-gray-800">
-            <li>
-              <NavLink to="/home" className="hover:text-blue-500">
-                หน้าแรก
-              </NavLink>
+          <ul className="flex flex-col w-full space-y-4 p-4 text-gray-800">
+            <li className="w-full">
+              <Link to="/home" className={handleActivePage("/home")}>
+                <div className="flex w-full">หน้าแรก</div>
+              </Link>
             </li>
+            <div className="w-full h-0.5 bg-gray/10"></div>
             <li>
-              <NavLink to="/family" className="hover:text-blue-500">
-                ครอบครัว
-              </NavLink>
+              <Link to="/family" className={handleActivePage("/family")}>
+                <div className="flex w-full">ครอบครัว</div>
+              </Link>
             </li>
+            <div className="w-full h-0.5 bg-gray/10"></div>
             <li>
-              <NavLink to="/profile" className="hover:text-blue-500">
-                โปรไฟล์
-              </NavLink>
+              <Link to="/profile" className={handleActivePage("/profile")}>
+                <div className="flex w-full">โปรไฟล์</div>
+              </Link>
             </li>
+            <div className="w-full h-0.5 bg-gray/10"></div>
             <li>
-              <NavLink to="/" className="hover:text-blue-500">
-                ออกจากระบบ
-              </NavLink>
+              <Link to="/" className={handleActivePage("/")}>
+                <div className="flex w-full">ออกจากระบบ</div>
+              </Link>
             </li>
           </ul>
         </div>

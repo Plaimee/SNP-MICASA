@@ -79,7 +79,7 @@ export default function GuestPage() {
   ];
 
   return (
-    <div>
+    <div className="pb-3">
       <div className="h-56 bg-orange-400 p-5 gap-2 bg-[url('../assets/Banner.svg')]">
         <div className="flex items-center space-x-2">
           <span className="text-[32px] font-bold text-white">Micasa</span>
@@ -116,16 +116,6 @@ export default function GuestPage() {
           ))}
         </div>
       </div>
-      {/* <div className="w-full space-y-2 py-5 px-2">
-        <div className="text-2xl">กิจกรรมสุดพิเศษ</div>
-        <div className="flex flex-wrap justify-between">
-          {bannerMenu.map((menu: IDataMenuCard, index: number) =>
-            <div key={index} className="w-6/12 p-2">
-              <MenuCard data={menu} />
-            </div>
-          )}
-        </div>
-      </div> */}
     </div>
   );
 }
