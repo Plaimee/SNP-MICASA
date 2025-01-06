@@ -20,7 +20,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="relative pb-3 shadow-sm bg-white">
+    <nav className="sticky top-0 pb-3 shadow-sm bg-white">
       <div className="flex w-full justify-between pad-main">
         <img className="flex w-10 h-10" src={Logo} alt="Logo" />
 
@@ -42,7 +42,7 @@ export default function Navigation() {
         </div>
 
         <button
-          className="flex justify-center items-center text-center w-10 focus:outline-none md:hidden"
+          className="flex justify-center items-center text-center w-10 focus:outline-none"
           aria-label="Toggle menu"
           onClick={() => setShowMenu(!showMenu)} // สลับสถานะเมนู
         >
@@ -65,7 +65,7 @@ export default function Navigation() {
       <div
         className={`${
           showMenu
-            ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden"
+            ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20"
             : "hidden"
         }`}
         aria-hidden="false"

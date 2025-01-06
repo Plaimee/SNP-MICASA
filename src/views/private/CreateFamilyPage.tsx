@@ -57,7 +57,7 @@ export default function CreateFamilyPage() {
       famImgName: values.famImg.filename,
       famName: values.famName,
       nickName: values.nickName,
-      famDuty: values.famDuty,
+      famRole: values.famRole,
     };
 
     setLoading(true);
@@ -88,7 +88,7 @@ export default function CreateFamilyPage() {
             },
             famName: "",
             nickName: "",
-            famDuty: 0,
+            famRole: 0,
           }}
           onSubmit={(values: IFormFamily) => submitForm(values)}
         >

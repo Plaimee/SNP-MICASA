@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export interface IStatusCard {
   data: IDataStatusCard;
@@ -9,6 +10,7 @@ export interface IDataStatusCard {
   title: string;
   description: string;
   amount: number;
+  path: string;
 }
 
 export default function StatusCard({ data }: IStatusCard) {
@@ -29,7 +31,8 @@ export default function StatusCard({ data }: IStatusCard) {
   const [textColor, setTextColor] = useState<string>(initialColors.textColor);
 
   return (
-    <div
+    <Link
+      to={data.path}
       className={`flex flex-row justify-between w-full ${bgColor} rounded-md p-3`}
     >
       <div className="flex flex-col space-y-1">
@@ -37,7 +40,9 @@ export default function StatusCard({ data }: IStatusCard) {
         <p className="text-small text-gray">{data.description}</p>
       </div>
 
-      <h3 className={`text-center items-center ${textColor}`}>{data.amount}</h3>
-    </div>
+      <h3 className={`text-center items-center ${textColor}`}>
+        {data.amount} กิจกรรม
+      </h3>
+    </Link>
   );
 }

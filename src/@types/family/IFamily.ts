@@ -4,13 +4,13 @@ export interface IFormFamily {
   famImg: IFile;
   famName: string;
   nickName: string;
-  famDuty: number;
+  famRole: number;
 }
 
 export interface IFormDataFamily {
   famName: string;
   nickName: string;
-  famDuty: number;
+  famRole: number;
   famImg: File | string;
   famImgName: string;
 }

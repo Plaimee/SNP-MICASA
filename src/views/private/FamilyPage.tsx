@@ -3,30 +3,41 @@ import StatusCard, {
 } from "@/components/status-card/StatusCard";
 import MenuCard, { IDataMenuCard } from "@/components/menu-card/MenuCard";
 import { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "@/assets/Logo.png";
+import MemberList, {
+  IDataMemberList,
+} from "@/components/member-list/MemberList";
 
 export default function FamilyPage() {
   const [check, setCheck] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate("/family/member");
+  };
 
   const status = [
     {
       id: "pending",
       title: "กำลังดำเนินการอยู่",
-      description: "(เลือกเมนู)",
+      description: "Pending",
       amount: 0,
+      path: "/activity/pending",
     },
     {
       id: "success",
       title: "รายการที่สำเร็จ",
-      description: "(ยังไม่มีเมนู)",
+      description: "Success",
       amount: 0,
+      path: "/activity/success",
     },
     {
       id: "failed",
       title: "รายการไม่สำเร็จ",
-      description: "(ยังไม่มีเมนู)",
+      description: "Failed",
       amount: 0,
+      path: "/activity/failed",
     },
   ];
 
@@ -102,6 +113,29 @@ export default function FamilyPage() {
     },
   ];
 
+  const members = [
+    {
+      id: 1,
+      nickName: "อาจารย์เบียร์",
+      actAmount: 17,
+    },
+    {
+      id: 2,
+      nickName: "อาจารย์แดง",
+      actAmount: 16,
+    },
+    {
+      id: 3,
+      nickName: "อาจารย์เบิ้ม",
+      actAmount: 15,
+    },
+    {
+      id: 4,
+      nickName: "อาจารย์คง",
+      actAmount: 14,
+    },
+  ];
+
   return (
     <Fragment>
       {check ? (
@@ -141,13 +175,18 @@ export default function FamilyPage() {
                 <div className="text-small">รหัสครอบครัว - 24GENZ0001</div>
               </div>
             </div>
-            <i className="fa-solid fa-user-group text-h2"></i>
+            <i
+              className="fa-solid fa-user-group text-h2 cursor-pointer"
+              onClick={handleNavigate}
+            ></i>
           </div>
 
           <div className="pad-main mb-2">
             <div className="flex justify-between text-center mb-2">
               <div className="text-body2 font-semibold">สถานะกิจกรรม</div>
-              <div className="text-small underline">ดูทั้งหมด</div>
+              <Link to="/activity" className="text-small underline">
+                ดูทั้งหมด
+              </Link>
             </div>
             <div className="wrap-items-center space-y-2">
               {status.map((status: IDataStatusCard, index: number) => (
@@ -173,11 +212,11 @@ export default function FamilyPage() {
           </div>
 
           <div className="pad-main space-y-2 mb-2">
-            <div className="text-body2 font-semibold">สถิติการทำภารกิจ</div>
+            <div className="text-body2 font-semibold">สถิติการทำกิจกรรม</div>
             <div className="wrap-items-center space-y-2">
-              {status.map((status: IDataStatusCard, index: number) => (
+              {members.map((status: IDataMemberList, index: number) => (
                 <div key={index} className="w-full">
-                  <StatusCard data={status} />
+                  <MemberList data={status} />
                 </div>
               ))}
             </div>
