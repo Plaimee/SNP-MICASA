@@ -1,5 +1,9 @@
 import { IDataMenuCard, MenuDetailCard } from "@/components/menu-card/MenuCard";
+import Dropdown from "@/components/dropdown/Dropdown";
 import { Link } from "react-router-dom";
+import { Formik, Form } from "formik";
+import { error } from "console";
+import { IOptionDDL } from "@/@types/global";
 
 export default function ActivityPage() {
   const menus = [
@@ -27,6 +31,11 @@ export default function ActivityPage() {
       time: "15",
     },
   ];
+  const duties = [
+    { id: "1", name: "ชาย" },
+    { id: "2", name: "หญิง" },
+    { id: "3", name: "อื่นๆ" },
+  ];
   return (
     <div className="pad-main space-y-2 mb-3">
       <Link
@@ -47,6 +56,31 @@ export default function ActivityPage() {
           </div>
         ))}
       </div>
+      <Formik
+        enableReinitialize
+        initialValues={{ duty: "" }}
+        onSubmit={(values) => {
+          console.log(values);
+        }}
+      >
+        {({ setFieldValue, values, touched, errors }) => (
+          <Form>
+            <div className="w-full">
+              <Dropdown
+                title="เลือกหน้าที่ของคุณ"
+                options={duties}
+                value={duties.filter((g) => g.id === values.duty)}
+                optionValue="id"
+                optionLabel={(z: IOptionDDL) => z?.name}
+                onChange={(e: IOptionDDL) => setFieldValue("duty", e.id)}
+                touched={touched.duty}
+                error={errors.duty}
+              />
+            </div>
+          </Form>
+        )}
+      </Formik>
+
       <button className="relative bottom-0 btn-bfl btn-main opacity-20 cursor-not-allowed">
         เริ่มการทำอาหาร
       </button>
