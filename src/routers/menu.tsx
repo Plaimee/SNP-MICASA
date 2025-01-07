@@ -1,9 +1,9 @@
 import { RouteObject } from "react-router-dom";
-import Guest from "@/views/GuestPage";
+import Guest from "@/views/public/GuestPage";
 import Home from "@/views/private/HomePage";
-import LoginPage from "@/views/LoginPage";
-import RegisterPage from "@/views/RegisterPage";
-import MoreRegisterDetailPage from "@/views/MoreRegisterDetailPage";
+import LoginPage from "@/views/public/authenticate/LoginPage";
+import RegisterPage from "@/views/public/authenticate/RegisterPage";
+import MoreRegisterDetailPage from "@/views/public/authenticate/MoreRegisterDetailPage";
 import FamilyPage from "@/views/private/FamilyPage";
 import CreateFamilyPage from "@/views/private/CreateFamilyPage";
 import ProfilePage from "@/views/private/ProfilePage";
@@ -23,6 +23,7 @@ export const publicRoutes: RouteObject[] = [
 ];
 
 export const privateRoutes: RouteObject[] = [
+  { path: "*", element: <></> },
   { path: "/home", element: <Home /> },
   { path: "/family", element: <FamilyPage /> },
   { path: "/family/create", element: <CreateFamilyPage /> },

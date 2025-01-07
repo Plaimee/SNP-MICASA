@@ -1,5 +1,5 @@
-import { IFormCreateAccount } from "./IRegister";
+import { IFormCreateAccount } from './IRegister';
 
-export interface IStateLocation {
-    account: IFormCreateAccount
+export interface IStateLocationRegister {
+  account: IFormCreateAccount;
 }
