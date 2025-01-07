@@ -1,10 +1,13 @@
 import { IDataMenuCard, MenuDetailCard } from "@/components/menu-card/MenuCard";
 import Dropdown from "@/components/dropdown/Dropdown";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { IOptionDDL } from "@/@types/global";
+import * as Yup from "Yup";
+import { IFormActivityDuty } from "@/@types/family/IFamily";
 
 export default function ActivityPage() {
+  const navigate = useNavigate();
   const menus = [
     {
       id: 1,
@@ -35,6 +38,21 @@ export default function ActivityPage() {
     { id: "2", name: "ปรุงอาหาร" },
     { id: "3", name: "ตกแต่งหน้าตาอาหาร" },
   ];
+
+  function validate() {
+    return Yup.object({
+      famDuty: Yup.string().required("กรุณาเลือกหน้าที่"),
+    });
+  }
+
+  async function submitForm(values: IFormActivityDuty) {
+    const data: IFormActivityDuty = {
+      famDuty: values.famDuty,
+    };
+    console.log(data);
+    navigate("/home");
+  }
+
   return (
     <div className="pad-main space-y-2 mb-3">
       <Link
@@ -57,9 +75,10 @@ export default function ActivityPage() {
       </div>
       <Formik
         enableReinitialize
-        initialValues={{ duty: "" }}
-        onSubmit={(values) => {
-          console.log(values);
+        validationSchema={validate}
+        initialValues={{ famDuty: "" }}
+        onSubmit={(values: IFormActivityDuty) => {
+          submitForm(values);
         }}
       >
         {({ setFieldValue, values, touched, errors }) => (
@@ -68,15 +87,18 @@ export default function ActivityPage() {
               <Dropdown
                 title="เลือกหน้าที่ของคุณ"
                 options={duties}
-                value={duties.filter((g) => g.id === values.duty)}
+                value={duties.filter((g) => g.id === values.famDuty)}
                 optionValue="id"
                 optionLabel={(z: IOptionDDL) => z?.name}
-                onChange={(e: IOptionDDL) => setFieldValue("duty", e.id)}
-                touched={touched.duty}
-                error={errors.duty}
+                onChange={(e: IOptionDDL) => setFieldValue("famDuty", e.id)}
+                touched={touched.famDuty}
+                error={errors.famDuty}
               />
             </div>
-            <button className="btn-bfl btn-main opacity-20 cursor-not-allowed">
+            <button
+              type="submit"
+              className="btn-bfl btn-main cursor-not-allowed"
+            >
               เริ่มการทำอาหาร
             </button>
           </Form>

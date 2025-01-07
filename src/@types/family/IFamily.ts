@@ -19,3 +19,7 @@ export interface IFormJoinFamily {
   famCode: string;
   nickName: string;
 }
+
+export interface IFormActivityDuty {
+  famDuty: string;
+}

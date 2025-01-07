@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface IMenuCard {
   data: IDataMenuCard;
@@ -17,6 +18,7 @@ export interface IDataMenuCard {
 
 export default function MenuCard({ data }: IMenuCard) {
   const [showDetail, setShowDetail] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleOutsideClick = (event: React.MouseEvent) => {
     if ((event.target as HTMLElement).closest(".detail-container") === null) {
@@ -90,7 +92,12 @@ export default function MenuCard({ data }: IMenuCard) {
             </ul>
 
             <div className="flex w-full space-x-2">
-              <button className="btn-bft btn-main w-full">รับภารกิจ</button>
+              <button
+                onClick={() => navigate("/activity/pending")}
+                className="btn-bft btn-main w-full"
+              >
+                รับภารกิจ
+              </button>
               <button
                 className="btn-bft btn-sub w-full"
                 onClick={() => setShowDetail(!showDetail)}
@@ -191,4 +198,3 @@ export function PendingMenuCard({ data }: IMenuCard) {
     </div>
   );
 }
-
