@@ -2,7 +2,6 @@ import { IDataMenuCard, MenuDetailCard } from "@/components/menu-card/MenuCard";
 import Dropdown from "@/components/dropdown/Dropdown";
 import { Link } from "react-router-dom";
 import { Formik, Form } from "formik";
-import { error } from "console";
 import { IOptionDDL } from "@/@types/global";
 
 export default function ActivityPage() {
