@@ -32,9 +32,9 @@ export default function ActivityPage() {
     },
   ];
   const duties = [
-    { id: "1", name: "ชาย" },
-    { id: "2", name: "หญิง" },
-    { id: "3", name: "อื่นๆ" },
+    { id: "1", name: "เตรียมวัตถุดิบ" },
+    { id: "2", name: "ปรุงอาหาร" },
+    { id: "3", name: "ตกแต่งหน้าตาอาหาร" },
   ];
   return (
     <div className="pad-main space-y-2 mb-3">
@@ -65,7 +65,7 @@ export default function ActivityPage() {
       >
         {({ setFieldValue, values, touched, errors }) => (
           <Form>
-            <div className="w-full">
+            <div className="w-full mb-3">
               <Dropdown
                 title="เลือกหน้าที่ของคุณ"
                 options={duties}
@@ -77,13 +77,12 @@ export default function ActivityPage() {
                 error={errors.duty}
               />
             </div>
+            <button className="btn-bfl btn-main opacity-20 cursor-not-allowed">
+              เริ่มการทำอาหาร
+            </button>
           </Form>
         )}
       </Formik>
-
-      <button className="relative bottom-0 btn-bfl btn-main opacity-20 cursor-not-allowed">
-        เริ่มการทำอาหาร
-      </button>
     </div>
   );
 }
