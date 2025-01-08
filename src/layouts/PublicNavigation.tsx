@@ -7,11 +7,11 @@ export default function PublicNavigation() {
   const location = useLocation();
   const { pathname } = location;
 
-  const handleActivePage = (path: string) => {
-    return pathname === path
-      ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2"
-      : "text-black";
-  };
+  const menu = [
+    { id: 1, path: "/", name: "หน้าแรก" },
+    { id: 1, path: "/login", name: "เข้าสู่ระบบ" },
+    { id: 1, path: "/register", name: "สมัครสมาชิก" },
+  ];
 
   const handleOutsideClick = (event: React.MouseEvent) => {
     if ((event.target as HTMLElement).closest(".menu-container") === null) {
@@ -50,36 +50,23 @@ export default function PublicNavigation() {
 
           {/* Menu */}
           <div
-            className={`${
-              showMenu
-                ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden"
-                : "hidden"
-            }`}
+            className={`${showMenu
+              ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden"
+              : "hidden"
+              }`}
             aria-hidden="false"
             onClick={handleOutsideClick} // ตรวจจับการคลิกที่พื้นหลัง
           >
             <div className="menu-container">
+
               <ul className="flex flex-col w-full space-y-4 p-4 text-gray-800">
-                <li className="w-full">
-                  <Link to="/" className={handleActivePage("/")}>
-                    <div className="flex w-full">หน้าแรก</div>
-                  </Link>
-                </li>
-                <div className="w-full h-0.5 bg-gray/10"></div>
-                <li>
-                  <Link to="/login" className={handleActivePage("/login")}>
-                    <div className="flex w-full">เข้าสู่ระบบ</div>
-                  </Link>
-                </li>
-                <div className="w-full h-0.5 bg-gray/10"></div>
-                <li>
-                  <Link
-                    to="/register"
-                    className={handleActivePage("/register")}
-                  >
-                    <div className="flex w-full">สมัครสมาชิก</div>
-                  </Link>
-                </li>
+                {menu.map((item, i) =>
+                  <li className="w-full" key={i}>
+                    <Link to={item.path} className={pathname === item.path ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2" : "text-black"} onClick={() => setShowMenu(false)}>
+                      <div className="flex w-full">{item.name}</div>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           </div>

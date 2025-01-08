@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 interface User {
   id: number;
@@ -9,7 +9,6 @@ interface User {
   gender: number;
   roleId: number;
   profile: string;
-  created_date: string;
 }
 
 interface AuthenState {
@@ -23,38 +22,35 @@ const initialState: AuthenState = {
 };
 
 const authenSlice = createSlice({
-  name: "authen",
+  name: 'authen',
   initialState,
   reducers: {
     loginSuccess(state, action: PayloadAction<{ user: User; token: string }>) {
       const { user, token } = action.payload;
 
-      localStorage.setItem(
-        "user",
-        encodeURIComponent(btoa(JSON.stringify(user)))
-      );
-      localStorage.setItem("token", token);
+      localStorage.setItem('user', btoa(encodeURIComponent(JSON.stringify(user))));
+      localStorage.setItem('token', token);
 
       state.user = user;
       state.token = token;
     },
     logout(state) {
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
 
       state.user = initialState.user;
       state.token = initialState.token;
     },
     loadFromLocalStorage(state) {
-      const encodedUser = localStorage.getItem("user");
-      const token = localStorage.getItem("token");
+      const encodedUser = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
 
       if (encodedUser) {
         try {
-          const decodedUser = decodeURIComponent(atob(encodedUser));
+          const decodedUser = atob(decodeURIComponent(encodedUser));
           state.user = JSON.parse(decodedUser);
         } catch (error) {
-          console.error("Error decoding user data from localStorage:", error);
+          console.error('Error decoding user data from localStorage:', error);
           state.user = null;
         }
       }
@@ -63,8 +59,7 @@ const authenSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout, loadFromLocalStorage } =
-  authenSlice.actions;
+export const { loginSuccess, logout, loadFromLocalStorage } = authenSlice.actions;
 export const userData = (state: RootState) => state.authen.user;
 export const tokenData = (state: RootState) => state.authen.token;
 export default authenSlice.reducer;

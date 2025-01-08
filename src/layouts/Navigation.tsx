@@ -1,16 +1,29 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "@/assets/Logo.png";
+import { useAppDispatch } from "@/stores/hooks";
+import { logout } from "@/stores/reducers/authenReducer";
 
 export default function Navigation() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const location = useLocation();
   const { pathname } = location;
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    if (!user || !token) {
+      navigate('/');
+    }
+  });
 
   const handleActivePage = (path: string) => {
     return pathname === path
       ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2"
       : "text-black";
+
   };
 
   const handleOutsideClick = (event: React.MouseEvent) => {
@@ -25,11 +38,10 @@ export default function Navigation() {
         <img className="flex w-10 h-10" src={Logo} alt="Logo" />
 
         <div
-          className={`${
-            pathname === "/home"
-              ? "flex w-60 border border-org-main rounded-md"
-              : "hidden"
-          }`}
+          className={`${pathname === "/home"
+            ? "flex w-60 border border-org-main rounded-md"
+            : "hidden"
+            }`}
         >
           <input
             type="text"
@@ -63,11 +75,10 @@ export default function Navigation() {
 
       {/* Menu */}
       <div
-        className={`${
-          showMenu
-            ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20"
-            : "hidden"
-        }`}
+        className={`${showMenu
+          ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20"
+          : "hidden"
+          }`}
         aria-hidden="false"
         onClick={handleOutsideClick} // ตรวจจับการคลิกที่พื้นหลัง
       >
@@ -92,7 +103,7 @@ export default function Navigation() {
             </li>
             <div className="w-full h-0.5 bg-gray/10"></div>
             <li>
-              <Link to="/" className={handleActivePage("/")}>
+              <Link to="/" onClick={() => dispatch(logout())}>
                 <div className="flex w-full">ออกจากระบบ</div>
               </Link>
             </li>

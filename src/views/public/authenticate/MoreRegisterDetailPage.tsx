@@ -1,4 +1,4 @@
-import { IFormDataRegister, IFormRegister } from "@/@types/authentication/IRegister";
+import { IFormCreateAccount, IFormRegister } from "@/@types/authentication/IRegister";
 import { IStateLocationRegister } from "@/@types/authentication/IStateLocation";
 import { IOptionDDL } from "@/@types/global";
 import Dropdown from "@/components/dropdown/Dropdown";
@@ -9,6 +9,7 @@ import { ChangeEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
 import { genders, familyRole } from "@/jsondata/global.json";
+import { Registeration } from "@/services/authenticate/Register.Services";
 
 export default function MoreRegisterDetailPage() {
   const navigate = useNavigate();
@@ -56,22 +57,32 @@ export default function MoreRegisterDetailPage() {
     })
   });
 
-  async function submitForm(values: IFormRegister) {
-    const data: IFormDataRegister = {
-      profile: values.profile.file,
-      profileFilename: values.profile.filename,
-      email: account.email,
-      password: account.password,
-      fname: values.fname,
-      lname: values.lname,
-      gender: values.gender,
-      familyRole: values.familyRole,
-    };
+  function createFormData(values: IFormRegister, account: IFormCreateAccount) {
+    const form = new FormData();
 
+    form.append("fName", values.fname);
+    form.append("lName", values.lname);
+    form.append("email", account.email);
+    form.append("password", account.password);
+    form.append("roleId", values.familyRole);
+    form.append("gender", values.gender);
+    if (values.profile.file instanceof File) {
+      form.append("usrImg", values.profile.file, values.profile.filename || "profile.jpg");
+    } else if (typeof values.profile.file === "string" && values.profile.file.trim()) {
+      form.append("usrImg", values.profile.file);
+    }
+
+    return form;
+  }
+
+  async function submitForm(values: IFormRegister) {
+    const data = createFormData(values, account);
     setLoading(true);
-    console.log(data);
+    const res = await Registeration(data);
     setLoading(false);
-    navigate('/login');
+    if (res && res.statusCode === 201 && res.taskStatus) {
+      navigate('/login', { state: res.data });
+    }
   }
 
   return (

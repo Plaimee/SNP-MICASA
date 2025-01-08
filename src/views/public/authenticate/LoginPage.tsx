@@ -1,20 +1,29 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { ChangeEvent, useState } from "react";
 import * as Yup from "Yup";
 import Logo from "@/assets/Logo.png";
 import TextField from "@/components/text-field/TextField";
 import { IFormInitial } from "@/@types/authentication/ILogin";
+import { useAppDispatch } from "@/stores/hooks";
+import { LoggedIn } from "@/services/authenticate/Login.Services";
+import { loginSuccess } from "@/stores/reducers/authenReducer";
 
 export default function LoginPage() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { email, password } = location.state || {};
   const [loading, setLoading] = useState<boolean>(false);
 
   async function submitForm(values: IFormInitial) {
     setLoading(true);
-    console.log(values); // call api
+    const res = await LoggedIn(values);
     setLoading(false);
-    navigate('/home');
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      dispatch(loginSuccess(res.data));
+      navigate('/home');
+    }
   }
 
   function validate() {
@@ -34,8 +43,8 @@ export default function LoginPage() {
           enableReinitialize
           validationSchema={validate}
           initialValues={{
-            email: '',
-            password: '',
+            email: email ?? '',
+            password: password ?? '',
           }}
           onSubmit={(values: IFormInitial) => submitForm(values)}
         >
