@@ -12,12 +12,7 @@ const element = createRoutesFromElements(
   <>
     <Route path="*" element={<></>} />
 
-    {/* public route
-    {publicRoutes.map((route, index) => (
-      <Route key={index} path={route.path} element={route.element} />
-    ))} */}
-
-    {/* private route */}
+    {/* public route */}
     <Route element={<MainPublicLayout />}>
       {publicRoutes.map((route, index) => (
         <Route key={index} path={route.path} element={route.element} />

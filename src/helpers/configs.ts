@@ -1,14 +1,6 @@
 import axios from 'axios';
 
-const authRegister = axios.create({
-  baseURL: import.meta.env.VITE_API_SERVICES,
-  headers: {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'multipart/form-data',
-  },
-});
-
-const authLogin = axios.create({
+const gateway = axios.create({
   baseURL: import.meta.env.VITE_API_SERVICES,
   headers: {
     'Access-Control-Allow-Origin': '*',
@@ -16,4 +8,4 @@ const authLogin = axios.create({
   },
 });
 
-export { authRegister, authLogin };
+export { gateway };

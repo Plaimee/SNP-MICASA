@@ -11,6 +11,13 @@ export default function Navigation() {
   const location = useLocation();
   const { pathname } = location;
 
+  const menu = [
+    { id: 1, path: "/home", name: "หน้าแรก" },
+    { id: 2, path: "/family", name: "ครอบครัว" },
+    { id: 3, path: "/profile", name: "โปรไฟล์" },
+    { id: 4, path: "/", name: "ออกจากระบบ" },
+  ];
+
   useEffect(() => {
     const user = localStorage.getItem('user');
     const token = localStorage.getItem('token');
@@ -18,13 +25,6 @@ export default function Navigation() {
       navigate('/');
     }
   });
-
-  const handleActivePage = (path: string) => {
-    return pathname === path
-      ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2"
-      : "text-black";
-
-  };
 
   const handleOutsideClick = (event: React.MouseEvent) => {
     if ((event.target as HTMLElement).closest(".menu-container") === null) {
@@ -35,19 +35,11 @@ export default function Navigation() {
   return (
     <nav className="sticky top-0 pb-3 shadow-sm bg-white">
       <div className="flex w-full justify-between pad-main">
-        <img className="flex w-10 h-10" src={Logo} alt="Logo" />
-
-        <div
-          className={`${pathname === "/home"
-            ? "flex w-60 border border-org-main rounded-md"
-            : "hidden"
-            }`}
-        >
-          <input
-            type="text"
-            placeholder="ค้นหา"
-            className="w-full rounded-md focus:outline-none p-1 ps-3 text-small"
-          />
+        <Link to="/home">
+          <img className="flex w-10 h-10" src={Logo} alt="Logo" />
+        </Link>
+        <div className={`${pathname === "/home" ? "flex w-60 border border-org-main rounded-md" : "hidden"}`} >
+          <input type="text" placeholder="ค้นหา" className="w-full rounded-md focus:outline-none p-1 ps-3 text-small" />
           <button className="btn-bft btn-main">
             <i className="fa-solid fa-magnifying-glass text-small text-white"></i>
           </button>
@@ -84,29 +76,17 @@ export default function Navigation() {
       >
         <div className="menu-container">
           <ul className="flex flex-col w-full space-y-4 p-4 text-gray-800">
-            <li className="w-full">
-              <Link to="/home" className={handleActivePage("/home")}>
-                <div className="flex w-full">หน้าแรก</div>
-              </Link>
-            </li>
-            <div className="w-full h-0.5 bg-gray/10"></div>
-            <li>
-              <Link to="/family" className={handleActivePage("/family")}>
-                <div className="flex w-full">ครอบครัว</div>
-              </Link>
-            </li>
-            <div className="w-full h-0.5 bg-gray/10"></div>
-            <li>
-              <Link to="/profile" className={handleActivePage("/profile")}>
-                <div className="flex w-full">โปรไฟล์</div>
-              </Link>
-            </li>
-            <div className="w-full h-0.5 bg-gray/10"></div>
-            <li>
-              <Link to="/" onClick={() => dispatch(logout())}>
-                <div className="flex w-full">ออกจากระบบ</div>
-              </Link>
-            </li>
+            {menu.map((item, i) =>
+              <li className="w-full" key={i}>
+                <Link
+                  to={item.path}
+                  className={pathname === item.path ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2" : "text-black"}
+                  onClick={() => item.path === "/" && item.name === "ออกจากระบบ" ? dispatch(logout()) : setShowMenu(false)}
+                >
+                  <div className="flex w-full">{item.name}</div>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

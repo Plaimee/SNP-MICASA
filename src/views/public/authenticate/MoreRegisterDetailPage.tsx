@@ -9,7 +9,7 @@ import { ChangeEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
 import { genders, familyRole } from "@/jsondata/global.json";
-import { Registeration } from "@/services/authenticate/Register.Services";
+import { Registeration } from "@/services/authenticate/Authenticate.Services";
 
 export default function MoreRegisterDetailPage() {
   const navigate = useNavigate();
@@ -81,6 +81,7 @@ export default function MoreRegisterDetailPage() {
     const res = await Registeration(data);
     setLoading(false);
     if (res && res.statusCode === 201 && res.taskStatus) {
+      alert(res.message);
       navigate('/login', { state: res.data });
     }
   }

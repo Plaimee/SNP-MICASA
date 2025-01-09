@@ -26,7 +26,9 @@ export default function PublicNavigation() {
       ) : (
         <nav className="relative pb-3 shadow-sm bg-white">
           <div className="flex w-full justify-between pad-main">
-            <img className="flex w-10 h-10" src={Logo} alt="Logo" />
+            <Link to="/">
+              <img className="flex w-10 h-10" src={Logo} alt="Logo" />
+            </Link>
 
             <button
               className="flex justify-center items-center text-center w-10 focus:outline-none md:hidden"

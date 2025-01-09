@@ -6,8 +6,8 @@ import Logo from "@/assets/Logo.png";
 import TextField from "@/components/text-field/TextField";
 import { IFormInitial } from "@/@types/authentication/ILogin";
 import { useAppDispatch } from "@/stores/hooks";
-import { LoggedIn } from "@/services/authenticate/Login.Services";
 import { loginSuccess } from "@/stores/reducers/authenReducer";
+import { LoggedIn } from "@/services/authenticate/Authenticate.Services";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -21,8 +21,11 @@ export default function LoginPage() {
     const res = await LoggedIn(values);
     setLoading(false);
     if (res && res.statusCode === 200 && res.taskStatus) {
+      alert(res.message);
       dispatch(loginSuccess(res.data));
       navigate('/home');
+    } else {
+      alert(res.message);
     }
   }
 
