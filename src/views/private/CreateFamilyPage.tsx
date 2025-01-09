@@ -1,12 +1,15 @@
-import { IFormFamily, IFormDataFamily } from "@/@types/family/IFamily";
+import { IFormFamily } from "@/@types/family/IFamily";
 import TextField from "@/components/text-field/TextField";
 import UploadFile from "@/components/upload-file/UploadFile";
+import { useAppSelector } from "@/stores/hooks";
+import { userData } from "@/stores/reducers/authenReducer";
 import { Form, Formik } from "formik";
 import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
 
 export default function CreateFamilyPage() {
+  const user = useAppSelector(userData);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -14,54 +17,46 @@ export default function CreateFamilyPage() {
     return Yup.object({
       famName: Yup.string().required("กรุณากรอกชื่อครอบครัว"),
       nickName: Yup.string().required("กรุณาชื่อเล่นของคุณ"),
-      famImg: Yup.object().shape({
-        file: Yup.mixed<File | string>()
-          .test(
-            "fileValidation",
-            "กรุณาอัปโหลดรูปโปรไฟล์",
-            (value, context) => {
-              if (
-                context.parent.filename ||
-                (typeof value === "string" && value.trim() !== "")
-              ) {
-                return true;
-              }
+      // famImg: Yup.object().shape({
+      //   file: Yup.mixed<File | string>()
+      //     .test(
+      //       "fileValidation",
+      //       "กรุณาอัปโหลดรูปโปรไฟล์",
+      //       (value, context) => {
+      //         if (
+      //           context.parent.filename ||
+      //           (typeof value === "string" && value.trim() !== "")
+      //         ) {
+      //           return true;
+      //         }
 
-              if (value instanceof File) {
-                return value.size > 0;
-              }
+      //         if (value instanceof File) {
+      //           return value.size > 0;
+      //         }
 
-              return false;
-            }
-          )
-          .test("fileSize", "ขนาดไฟล์ต้องไม่เกิน 10MB", (value) => {
-            if (typeof value === "string" || !value) return true;
+      //         return false;
+      //       }
+      //     )
+      //     .test("fileSize", "ขนาดไฟล์ต้องไม่เกิน 10MB", (value) => {
+      //       if (typeof value === "string" || !value) return true;
 
-            if (!(value instanceof File)) return false;
-            return value.size <= 10 * 1024 * 1024; // 10MB
-          })
-          .test("fileType", "รองรับเฉพาะไฟล์ JPG, JPEG, PNG", (value) => {
-            if (typeof value === "string" || !value) return true;
+      //       if (!(value instanceof File)) return false;
+      //       return value.size <= 10 * 1024 * 1024; // 10MB
+      //     })
+      //     .test("fileType", "รองรับเฉพาะไฟล์ JPG, JPEG, PNG", (value) => {
+      //       if (typeof value === "string" || !value) return true;
 
-            if (!(value instanceof File)) return false;
-            const acceptedTypes = ["image/jpeg", "image/png", "image/jpg"];
-            return acceptedTypes.includes(value.type);
-          }),
-      }),
+      //       if (!(value instanceof File)) return false;
+      //       const acceptedTypes = ["image/jpeg", "image/png", "image/jpg"];
+      //       return acceptedTypes.includes(value.type);
+      //     }),
+      // }),
     });
   }
 
   async function submitForm(values: IFormFamily) {
-    const data: IFormDataFamily = {
-      famImg: values.famImg.file,
-      famImgName: values.famImg.filename,
-      famName: values.famName,
-      nickName: values.nickName,
-      famRole: values.famRole,
-    };
-
     setLoading(true);
-    console.log(data);
+    console.log(values);
     setLoading(false);
     navigate("/family");
   }
@@ -82,13 +77,22 @@ export default function CreateFamilyPage() {
           enableReinitialize
           validationSchema={validate}
           initialValues={{
-            famImg: {
-              file: "",
-              filename: "",
-            },
+            // famImg: {
+            //   file: "",
+            //   filename: "",
+            // },
+            // famName: "",
+            // nickName: "",
+            // famRole: 0,
+            userid: user?.id ?? 0,
             famName: "",
+            famProfile: {
+              file: "",
+              filename: ""
+            },
+            roleId: user?.roleId ?? 0,
             nickName: "",
-            famRole: 0,
+            profile: user?.profile ?? "",
           }}
           onSubmit={(values: IFormFamily) => submitForm(values)}
         >
@@ -97,16 +101,16 @@ export default function CreateFamilyPage() {
               <div className="w-full">
                 <UploadFile
                   accept=".jpg, .png, .jpeg"
-                  clearImage={!values.famImg}
+                  clearImage={!values.famProfile}
                   onFileChange={(file: File | null) => {
                     if (file) {
-                      setFieldValue("famImg.file", file);
-                      setFieldValue("famImg.filename", file.name);
+                      setFieldValue("famProfile.file", file);
+                      setFieldValue("famProfile.filename", file.name);
                     }
                   }}
                 />
                 <p className="text-red-main text-center pt-3">
-                  {errors.famImg?.file ? errors.famImg.file : ""}
+                  {errors.famProfile?.file ? errors.famProfile.file : ""}
                 </p>
               </div>
 

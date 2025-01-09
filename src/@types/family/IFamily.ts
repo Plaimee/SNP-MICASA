@@ -1,10 +1,12 @@
-import { IFile } from "../global";
+import { IFile } from '../global';
 
 export interface IFormFamily {
-  famImg: IFile;
+  userid: number;
   famName: string;
+  famProfile: IFile;
+  roleId: number;
   nickName: string;
-  famRole: number;
+  profile: string;
 }
 
 export interface IFormDataFamily {

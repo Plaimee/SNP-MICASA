@@ -10,7 +10,7 @@ import MemberList, {
 } from "@/components/member-list/MemberList";
 
 export default function FamilyPage() {
-  const [check, setCheck] = useState<boolean>(false);
+  const [check, /*setCheck */] = useState<boolean>(true);
   const navigate = useNavigate();
 
   const handleNavigate = () => {
