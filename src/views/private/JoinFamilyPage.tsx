@@ -4,20 +4,48 @@ import { ChangeEvent, useState } from "react";
 import { Formik, Form } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
+import { useAppSelector } from "@/stores/hooks";
+import { userData } from "@/stores/reducers/authenReducer";
+import { JoinFamily } from "@/services/family/Family.Services";
+import AlertMessage from "@/components/notification/AlertMessage";
 
 export default function JoinFamilyPage() {
+  const user = useAppSelector(userData);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const validate = Yup.object({
-    famCode: Yup.string().required("กรุณากรอกรหัสครอบครัว"),
-    nickName: Yup.string().required("กรุณากรอกชื่อเล่นของคุณ"),
-  });
+  function validate() {
+    return Yup.object({
+      famCode: Yup.string().required("กรุณากรอกรหัสครอบครัว"),
+      nickName: Yup.string().required("กรุณากรอกชื่อเล่นของคุณ"),
+    });
+  }
+
+  function joinFormData(values: IFormJoinFamily) {
+    const form = new FormData();
+
+    form.append("usrId", values.usrId.toString());
+    form.append("famCode", values.famCode);
+    form.append("nickName", values.nickName);
+    form.append("roleId", values.roleId.toString());
+    form.append("usrImg", values.usrProfile);
+
+    return form;
+  }
 
   async function submitForm(values: IFormJoinFamily) {
+    const data = joinFormData(values);
     setLoading(true);
+    const res = await JoinFamily(data);
     console.log(values);
     setLoading(false);
-    navigate("/family");
+
+    if (res && res.statusCode === 201 && res.taskStatus) {
+      AlertMessage({
+        type: "success",
+        title: res.message,
+      });
+      navigate("/family", { state: res.data.famCode });
+    }
   }
 
   return (
@@ -33,8 +61,11 @@ export default function JoinFamilyPage() {
         enableReinitialize
         validationSchema={validate}
         initialValues={{
+          usrId: user?.id ?? 0,
           famCode: "",
           nickName: "",
+          roleId: user?.roleId ?? 0,
+          usrProfile: user?.profile ?? "",
         }}
         onSubmit={(values: IFormJoinFamily) => submitForm(values)}
       >

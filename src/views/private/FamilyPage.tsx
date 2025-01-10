@@ -2,20 +2,43 @@ import StatusCard, {
   IDataStatusCard,
 } from "@/components/status-card/StatusCard";
 import MenuCard, { IDataMenuCard } from "@/components/menu-card/MenuCard";
-import { Fragment, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Fragment, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "@/assets/Logo.png";
 import MemberList, {
   IDataMemberList,
 } from "@/components/member-list/MemberList";
+import { ReadFamily } from "@/services/family/Family.Services";
+import { IFamilyData } from "@/@types/family/IFamily";
+import { useAppSelector } from "@/stores/hooks";
+import { userData } from "@/stores/reducers/authenReducer";
 
 export default function FamilyPage() {
-  const [check, /*setCheck */] = useState<boolean>(true);
+  const user = useAppSelector(userData);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<IFamilyData[]>([]);
+  const location = useLocation();
+  const { famCode } = location.state || {};
+  console.log(user);
   const navigate = useNavigate();
-
   const handleNavigate = () => {
     navigate("/family/member");
   };
+
+  useEffect(() => {
+    if (famCode || user?.famCode) {
+      readFamily(famCode ?? user?.famCode);
+    }
+  }, [famCode, user]);
+
+  async function readFamily(famCode: string) {
+    setLoading(true);
+    const res = await ReadFamily(famCode);
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      setData(res.data);
+    }
+  }
 
   const status = [
     {
@@ -138,7 +161,9 @@ export default function FamilyPage() {
 
   return (
     <Fragment>
-      {check ? (
+      {loading ? (
+        <i className="fa-solid fa-spinner animate-spin text-[60px]" />
+      ) : data.length === 0 ? (
         <div className="flex items-center justify-center w-full h-dvh mt-[-60px] pad-main">
           <div className="flex flex-col justify-center items-center w-60 rounded-md shadow-md p-5 text-center space-y-2">
             <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray/10">

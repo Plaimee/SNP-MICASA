@@ -25,9 +25,11 @@ export default function CreateFamilyPage() {
   function createFormData(values: IFormFamily) {
     const form = new FormData();
 
-    form.append("usrId", String(values.usrId));
+    form.append("usrId", values.usrId.toString());
     form.append("famName", values.famName);
     form.append("nickName", values.nickName);
+    form.append("roleId", values.roleId.toString());
+    form.append("usrImg", values.usrProfile);
     if (values.famProfile.file instanceof File) {
       form.append(
         "famImg",
@@ -55,7 +57,7 @@ export default function CreateFamilyPage() {
         type: "success",
         title: res.message,
       });
-      navigate("/family", { state: res.data });
+      navigate("/family", { state: res.data.famCode });
     }
   }
 
@@ -82,6 +84,8 @@ export default function CreateFamilyPage() {
               filename: "",
             },
             nickName: "",
+            roleId: user?.roleId ?? 0,
+            usrProfile: user?.profile ?? "",
           }}
           onSubmit={(values: IFormFamily) => submitForm(values)}
         >
