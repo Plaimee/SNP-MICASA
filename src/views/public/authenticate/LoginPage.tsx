@@ -8,6 +8,7 @@ import { IFormInitial } from "@/@types/authentication/ILogin";
 import { useAppDispatch } from "@/stores/hooks";
 import { loginSuccess } from "@/stores/reducers/authenReducer";
 import { LoggedIn } from "@/services/authenticate/Authenticate.Services";
+import AlertMessage from "@/components/notification/AlertMessage";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -21,18 +22,24 @@ export default function LoginPage() {
     const res = await LoggedIn(values);
     setLoading(false);
     if (res && res.statusCode === 200 && res.taskStatus) {
-      alert(res.message);
+      AlertMessage({
+        type: "success",
+        title: res.message,
+      });
       dispatch(loginSuccess(res.data));
-      navigate('/home');
+      navigate("/home");
     } else {
-      alert(res.message);
+      AlertMessage({
+        type: "warning",
+        title: res.message,
+      });
     }
   }
 
   function validate() {
     return Yup.object({
-      email: Yup.string().email().required('email'),
-      password: Yup.string().required('password')
+      email: Yup.string().email().required("email"),
+      password: Yup.string().required("password"),
     });
   }
 
@@ -46,12 +53,12 @@ export default function LoginPage() {
           enableReinitialize
           validationSchema={validate}
           initialValues={{
-            email: email ?? '',
-            password: password ?? '',
+            email: email ?? "",
+            password: password ?? "",
           }}
           onSubmit={(values: IFormInitial) => submitForm(values)}
         >
-          {({ setFieldValue, values, touched, errors }) =>
+          {({ setFieldValue, values, touched, errors }) => (
             <Form className="flex justify-center">
               <div className="wrap-items-center md:w-6/12">
                 <div className="w-full pad-main">
@@ -61,7 +68,9 @@ export default function LoginPage() {
                     name="email"
                     id="email"
                     value={values.email}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("email", e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setFieldValue("email", e.target.value)
+                    }
                     touched={touched.email}
                     error={errors.email}
                   />
@@ -73,7 +82,9 @@ export default function LoginPage() {
                     name="password"
                     id="password"
                     value={values.password}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("password", e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setFieldValue("password", e.target.value)
+                    }
                     touched={touched.password}
                     error={errors.password}
                   />
@@ -84,7 +95,11 @@ export default function LoginPage() {
                     type="submit"
                     className="btn-bfl btn-main"
                   >
-                    {loading ? <i className="fa-solid fa-spinner animate-spin"></i> : "เข้าสู่ระบบ"}
+                    {loading ? (
+                      <i className="fa-solid fa-spinner animate-spin"></i>
+                    ) : (
+                      "เข้าสู่ระบบ"
+                    )}
                   </button>
                 </div>
                 {/* <div className="flex py-5 items-center">
@@ -98,10 +113,15 @@ export default function LoginPage() {
                   <span className="w-full h-1 border-b border-gray opacity-50"></span>
                 </div>
 
-                <p className="pad-main">ยังไม่มีบัญชีใช่หรือไม่? <Link to='/register' className="text-org-main underline pl-2">สมัครสมาชิก</Link></p>
+                <p className="pad-main">
+                  ยังไม่มีบัญชีใช่หรือไม่?{" "}
+                  <Link to="/register" className="text-org-main underline pl-2">
+                    สมัครสมาชิก
+                  </Link>
+                </p>
               </div>
             </Form>
-          }
+          )}
         </Formik>
       </div>
     </div>

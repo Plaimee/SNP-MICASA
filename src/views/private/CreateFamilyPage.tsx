@@ -1,6 +1,8 @@
 import { IFormFamily } from "@/@types/family/IFamily";
+import AlertMessage from "@/components/notification/AlertMessage";
 import TextField from "@/components/text-field/TextField";
 import UploadFile from "@/components/upload-file/UploadFile";
+import { CreateFamily } from "@/services/family/Family.Services";
 import { useAppSelector } from "@/stores/hooks";
 import { userData } from "@/stores/reducers/authenReducer";
 import { Form, Formik } from "formik";
@@ -17,48 +19,44 @@ export default function CreateFamilyPage() {
     return Yup.object({
       famName: Yup.string().required("กรุณากรอกชื่อครอบครัว"),
       nickName: Yup.string().required("กรุณาชื่อเล่นของคุณ"),
-      // famImg: Yup.object().shape({
-      //   file: Yup.mixed<File | string>()
-      //     .test(
-      //       "fileValidation",
-      //       "กรุณาอัปโหลดรูปโปรไฟล์",
-      //       (value, context) => {
-      //         if (
-      //           context.parent.filename ||
-      //           (typeof value === "string" && value.trim() !== "")
-      //         ) {
-      //           return true;
-      //         }
-
-      //         if (value instanceof File) {
-      //           return value.size > 0;
-      //         }
-
-      //         return false;
-      //       }
-      //     )
-      //     .test("fileSize", "ขนาดไฟล์ต้องไม่เกิน 10MB", (value) => {
-      //       if (typeof value === "string" || !value) return true;
-
-      //       if (!(value instanceof File)) return false;
-      //       return value.size <= 10 * 1024 * 1024; // 10MB
-      //     })
-      //     .test("fileType", "รองรับเฉพาะไฟล์ JPG, JPEG, PNG", (value) => {
-      //       if (typeof value === "string" || !value) return true;
-
-      //       if (!(value instanceof File)) return false;
-      //       const acceptedTypes = ["image/jpeg", "image/png", "image/jpg"];
-      //       return acceptedTypes.includes(value.type);
-      //     }),
-      // }),
     });
   }
 
+  function createFormData(values: IFormFamily) {
+    const form = new FormData();
+
+    form.append("usrId", String(values.usrId));
+    form.append("famName", values.famName);
+    form.append("nickName", values.nickName);
+    if (values.famProfile.file instanceof File) {
+      form.append(
+        "famImg",
+        values.famProfile.file,
+        values.famProfile.filename || "profile.jpg"
+      );
+    } else if (
+      typeof values.famProfile.file === "string" &&
+      values.famProfile.file.trim()
+    ) {
+      form.append("famImg", values.famProfile.file);
+    }
+
+    return form;
+  }
+
   async function submitForm(values: IFormFamily) {
+    const data = createFormData(values);
     setLoading(true);
+    const res = await CreateFamily(data);
     console.log(values);
     setLoading(false);
-    navigate("/family");
+    if (res && res.statusCode === 201 && res.taskStatus) {
+      AlertMessage({
+        type: "success",
+        title: res.message,
+      });
+      navigate("/family", { state: res.data });
+    }
   }
 
   return (
@@ -77,22 +75,13 @@ export default function CreateFamilyPage() {
           enableReinitialize
           validationSchema={validate}
           initialValues={{
-            // famImg: {
-            //   file: "",
-            //   filename: "",
-            // },
-            // famName: "",
-            // nickName: "",
-            // famRole: 0,
-            userid: user?.id ?? 0,
+            usrId: user?.id ?? 0,
             famName: "",
             famProfile: {
               file: "",
-              filename: ""
+              filename: "",
             },
-            roleId: user?.roleId ?? 0,
             nickName: "",
-            profile: user?.profile ?? "",
           }}
           onSubmit={(values: IFormFamily) => submitForm(values)}
         >

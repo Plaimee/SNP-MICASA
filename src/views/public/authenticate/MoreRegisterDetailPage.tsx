@@ -1,4 +1,7 @@
-import { IFormCreateAccount, IFormRegister } from "@/@types/authentication/IRegister";
+import {
+  IFormCreateAccount,
+  IFormRegister,
+} from "@/@types/authentication/IRegister";
 import { IStateLocationRegister } from "@/@types/authentication/IStateLocation";
 import { IOptionDDL } from "@/@types/global";
 import Dropdown from "@/components/dropdown/Dropdown";
@@ -10,6 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
 import { genders, familyRole } from "@/jsondata/global.json";
 import { Registeration } from "@/services/authenticate/Authenticate.Services";
+import AlertMessage from "@/components/notification/AlertMessage";
 
 export default function MoreRegisterDetailPage() {
   const navigate = useNavigate();
@@ -26,8 +30,10 @@ export default function MoreRegisterDetailPage() {
       file: Yup.mixed<File | string>()
         .test("fileValidation", "กรุณาอัปโหลดรูปโปรไฟล์", (value, context) => {
           // If there's an existing filename or URL, consider it valid
-          if (context.parent.filename ||
-            (typeof value === 'string' && value.trim() !== '')) {
+          if (
+            context.parent.filename ||
+            (typeof value === "string" && value.trim() !== "")
+          ) {
             return true;
           }
 
@@ -41,20 +47,20 @@ export default function MoreRegisterDetailPage() {
         })
         .test("fileSize", "ขนาดไฟล์ต้องไม่เกิน 10MB", (value) => {
           // Skip size check if it's an existing image URL or filename
-          if (typeof value === 'string' || !value) return true;
+          if (typeof value === "string" || !value) return true;
 
           if (!(value instanceof File)) return false;
           return value.size <= 10 * 1024 * 1024; // 10MB
         })
         .test("fileType", "รองรับเฉพาะไฟล์ JPG, JPEG, PNG", (value) => {
           // Skip type check if it's an existing image URL or filename
-          if (typeof value === 'string' || !value) return true;
+          if (typeof value === "string" || !value) return true;
 
           if (!(value instanceof File)) return false;
-          const acceptedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+          const acceptedTypes = ["image/jpeg", "image/png", "image/jpg"];
           return acceptedTypes.includes(value.type);
-        })
-    })
+        }),
+    }),
   });
 
   function createFormData(values: IFormRegister, account: IFormCreateAccount) {
@@ -67,8 +73,15 @@ export default function MoreRegisterDetailPage() {
     form.append("roleId", values.familyRole);
     form.append("gender", values.gender);
     if (values.profile.file instanceof File) {
-      form.append("usrImg", values.profile.file, values.profile.filename || "profile.jpg");
-    } else if (typeof values.profile.file === "string" && values.profile.file.trim()) {
+      form.append(
+        "usrImg",
+        values.profile.file,
+        values.profile.filename || "profile.jpg"
+      );
+    } else if (
+      typeof values.profile.file === "string" &&
+      values.profile.file.trim()
+    ) {
       form.append("usrImg", values.profile.file);
     }
 
@@ -81,8 +94,11 @@ export default function MoreRegisterDetailPage() {
     const res = await Registeration(data);
     setLoading(false);
     if (res && res.statusCode === 201 && res.taskStatus) {
-      alert(res.message);
-      navigate('/login', { state: res.data });
+      AlertMessage({
+        type: "success",
+        title: res.message,
+      });
+      navigate("/login", { state: res.data });
     }
   }
 
@@ -98,16 +114,16 @@ export default function MoreRegisterDetailPage() {
         initialValues={{
           profile: {
             file: "",
-            filename: ""
+            filename: "",
           },
           fname: "",
           lname: "",
           gender: "",
-          familyRole: ""
+          familyRole: "",
         }}
         onSubmit={(values: IFormRegister) => submitForm(values)}
       >
-        {({ setFieldValue, values, touched, errors }) =>
+        {({ setFieldValue, values, touched, errors }) => (
           <Form className="flex justify-center">
             <div className="wrap-items-center md:w-6/12">
               <div className="w-full pad-main">
@@ -121,7 +137,9 @@ export default function MoreRegisterDetailPage() {
                     }
                   }}
                 />
-                <p className="text-red-main">{errors.profile?.file ? errors.profile.file : ""}</p>
+                <p className="text-red-main">
+                  {errors.profile?.file ? errors.profile.file : ""}
+                </p>
               </div>
               <div className="w-full pad-main">
                 <TextField
@@ -129,7 +147,9 @@ export default function MoreRegisterDetailPage() {
                   name="fname"
                   id="fname"
                   value={values.fname}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("fname", e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setFieldValue("fname", e.target.value)
+                  }
                   touched={touched.fname}
                   error={errors.fname}
                 />
@@ -140,7 +160,9 @@ export default function MoreRegisterDetailPage() {
                   name="lname"
                   id="lname"
                   value={values.lname}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("lname", e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setFieldValue("lname", e.target.value)
+                  }
                   touched={touched.lname}
                   error={errors.lname}
                 />
@@ -149,7 +171,7 @@ export default function MoreRegisterDetailPage() {
                 <Dropdown
                   title="เพศ"
                   options={genders}
-                  value={genders.filter(g => g.id === values.gender)}
+                  value={genders.filter((g) => g.id === values.gender)}
                   optionValue="id"
                   optionLabel={(z: IOptionDDL) => z?.name}
                   onChange={(e: IOptionDDL) => setFieldValue("gender", e.id)}
@@ -161,25 +183,39 @@ export default function MoreRegisterDetailPage() {
                 <Dropdown
                   title="บทบาทในครอบครัว"
                   options={familyRole}
-                  value={familyRole.filter(g => g.id === values.familyRole)}
+                  value={familyRole.filter((g) => g.id === values.familyRole)}
                   optionValue="id"
                   optionLabel={(z: IOptionDDL) => z?.name}
-                  onChange={(e: IOptionDDL) => setFieldValue("familyRole", e.id)}
+                  onChange={(e: IOptionDDL) =>
+                    setFieldValue("familyRole", e.id)
+                  }
                   touched={touched.familyRole}
                   error={errors.familyRole}
                 />
               </div>
               <div className="container-button pad-main mt-3">
-                <button disabled={loading} type="submit" className="btn-bfl btn-main" >
-                  {loading ? <i className="fa-solid fa-spinner animate-spin"></i> : "ยืนยัน"}
+                <button
+                  disabled={loading}
+                  type="submit"
+                  className="btn-bfl btn-main"
+                >
+                  {loading ? (
+                    <i className="fa-solid fa-spinner animate-spin"></i>
+                  ) : (
+                    "ยืนยัน"
+                  )}
                 </button>
-                <button type="reset" className="btn-bfl btn-sub" onClick={() => navigate('/register', { state: { account } })}>
+                <button
+                  type="reset"
+                  className="btn-bfl btn-sub"
+                  onClick={() => navigate("/register", { state: { account } })}
+                >
                   ย้อนกลับ
                 </button>
               </div>
             </div>
           </Form>
-        }
+        )}
       </Formik>
     </div>
   );

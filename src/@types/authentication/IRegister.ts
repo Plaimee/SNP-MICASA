@@ -7,20 +7,20 @@ export interface IFormCreateAccount {
 }
 
 export interface IFormRegister {
-    profile: IFile,
-    fname: string,
-    lname: string,
-    gender: string,
-    familyRole: string
+  profile: IFile;
+  fname: string;
+  lname: string;
+  gender: string;
+  familyRole: string;
 }
 
 export interface IFormDataRegister {
-    email: string;
-    password: string;
-    fname:string;
-    lname:string;
-    gender:string;
-    familyRole:string;
-    profile: File | string;
-    profileFilename: string;
+  email: string;
+  password: string;
+  fname: string;
+  lname: string;
+  gender: string;
+  familyRole: string;
+  profile: File | string;
+  profileFilename: string;
 }

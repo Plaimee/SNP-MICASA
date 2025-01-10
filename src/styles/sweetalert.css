@@ -1,0 +1,106 @@
+.swal2-html-container {
+  @apply !overflow-visible !m-0;
+}
+
+.swal2-main-content {
+  position: absolute !important;
+}
+
+.swal2-popup {
+  display: none;
+  position: relative;
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 100%);
+  width: 30em !important;
+  max-width: 100%;
+  padding: 14px 0 !important;
+  border: none;
+  border-radius: 30px !important;
+  background: #fff;
+  color: #545454;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.swal2-styled.swal2-confirm {
+  border: 0;
+  border-radius: 25px !important;
+  padding-left: 25px !important;
+  padding-right: 25px !important;
+  color: #fff;
+  font-size: 1em;
+  @apply min-w-[100px];
+}
+
+.swal2-styled.swal2-confirm:hover {
+  color: #fff;
+  font-size: 1em;
+  @apply min-w-[100px];
+}
+
+.swal2-styled.swal2-cancel {
+  border-radius: 25px !important;
+  padding-left: 25px !important;
+  padding-right: 25px !important;
+  font-size: 1em;
+  @apply min-w-[100px];
+}
+
+.swal2-styled.swal2-cancel:hover {
+  border-radius: 25px !important;
+  padding-left: 25px !important;
+  padding-right: 25px !important;
+  font-size: 1em;
+  @apply min-w-[100px];
+}
+
+.swal2-styled {
+  padding: 0.625em 1.1em;
+  transition: box-shadow 0.1s;
+  box-shadow: none !important;
+  font-weight: 500;
+}
+
+div.swal2-container div.swal2-actions {
+  @apply !mx-0 mt-2;
+}
+
+.swal2-actions {
+  @apply w-full flex justify-center items-start;
+}
+
+.confirm-button-question {
+  border: 1px solid #3d6890 !important;
+  background-color: white !important;
+  color: #3d6890 !important;
+}
+
+.cancel-button-question {
+  border: 1px solid #3d6890 !important;
+  background-color: transparent !important;
+  color: #3d6890 !important;
+}
+
+.cancel-button-error {
+  border: 1px solid #f15a5b !important;
+  background-color: transparent !important;
+  color: #f15a5b !important;
+}
+
+.cancel-button-warning {
+  border: 1px solid #fab81b !important;
+  background-color: transparent !important;
+  color: #fab81b !important;
+}
+
+.cancel-button-success {
+  border: 1px solid #12a90f !important;
+  background-color: transparent !important;
+  color: #12a90f !important;
+}
+
+.cancel-button-info {
+  border: 1px solid #2ebee2 !important;
+  background-color: transparent !important;
+  color: #2ebee2 !important;
+}

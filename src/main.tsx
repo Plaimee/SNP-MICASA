@@ -1,6 +1,7 @@
 // import { StrictMode } from 'react';
 import { createRoot } from "react-dom/client";
 import "./styles/global.css";
+import "./styles/sweetalert.css";
 
 import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
