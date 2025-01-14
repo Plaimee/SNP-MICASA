@@ -33,7 +33,6 @@ export default function FamilyPage() {
     setLoading(false);
     if (res && res.statusCode === 200 && res.taskStatus) {
       setData(res.data);
-      console.log(res.data);
     }
   }
 

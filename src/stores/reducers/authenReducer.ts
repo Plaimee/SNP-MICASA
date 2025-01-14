@@ -47,10 +47,9 @@ const authenSlice = createSlice({
     loadFromLocalStorage(state) {
       const encodedUser = localStorage.getItem('user');
       const token = localStorage.getItem('token');
-
       if (encodedUser) {
         try {
-          const decodedUser = atob(decodeURIComponent(encodedUser));
+          const decodedUser = decodeURIComponent(atob(encodedUser));
           state.user = JSON.parse(decodedUser);
         } catch (error) {
           console.error('Error decoding user data from localStorage:', error);
