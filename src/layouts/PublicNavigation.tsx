@@ -64,7 +64,7 @@ export default function PublicNavigation() {
               <ul className="flex flex-col w-full space-y-4 p-4 text-gray-800">
                 {menu.map((item, i) =>
                   <li className="w-full" key={i}>
-                    <Link to={item.path} className={pathname === item.path ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2" : "text-black"} onClick={() => setShowMenu(false)}>
+                    <Link to={item.path} className={`${pathname === item.path ? "bg-org-main font-semibold text-white" : "text-black"} flex w-full rounded-md p-2`} onClick={() => setShowMenu(false)}>
                       <div className="flex w-full">{item.name}</div>
                     </Link>
                   </li>
