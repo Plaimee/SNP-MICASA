@@ -15,15 +15,11 @@ import { userData } from "@/stores/reducers/authenReducer";
 
 export default function FamilyPage() {
   const user = useAppSelector(userData);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<IFamilyData[]>([]);
+  const [data, setData] = useState<IFamilyData | null>(null);
   const location = useLocation();
   const { famCode } = location.state || {};
-  console.log(user);
-  const navigate = useNavigate();
-  const handleNavigate = () => {
-    navigate("/family/member");
-  };
 
   useEffect(() => {
     if (famCode || user?.famCode) {
@@ -37,6 +33,7 @@ export default function FamilyPage() {
     setLoading(false);
     if (res && res.statusCode === 200 && res.taskStatus) {
       setData(res.data);
+      console.log(res.data);
     }
   }
 
@@ -163,7 +160,7 @@ export default function FamilyPage() {
     <Fragment>
       {loading ? (
         <i className="fa-solid fa-spinner animate-spin text-[60px]" />
-      ) : data.length === 0 ? (
+      ) : data === null ? (
         <div className="flex items-center justify-center w-full h-dvh mt-[-60px] pad-main">
           <div className="flex flex-col justify-center items-center w-60 rounded-md shadow-md p-5 text-center space-y-2">
             <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray/10">
@@ -193,16 +190,16 @@ export default function FamilyPage() {
         <div className="w-full">
           <div className="flex justify-between items-center py-5 bg-gray/10 w-full pad-main">
             <div className="flex space-x-3">
-              <img className="w-[72px] h-[72px]" src={Logo} alt="test" />
+              <img className="w-[72px] h-[72px] rounded-full" src={data.profile ?? Logo} alt="test" />
               <div className="flex flex-col">
                 <div className="text-body2">สวัสดี</div>
-                <div className="text-body1 font-bold">ครอบครัวหมูเด้ง</div>
-                <div className="text-small">รหัสครอบครัว - 24GENZ0001</div>
+                <div className="text-body1 font-bold">{data.famName}</div>
+                <div className="text-small">รหัสครอบครัว - {data.famCode}</div>
               </div>
             </div>
             <i
               className="fa-solid fa-user-group text-h2 cursor-pointer"
-              onClick={handleNavigate}
+              onClick={() => navigate("/family/member", { state: { famData: data } })}
             ></i>
           </div>
 
@@ -248,6 +245,6 @@ export default function FamilyPage() {
           </div>
         </div>
       )}
-    </Fragment>
+    </Fragment >
   );
 }

@@ -4,12 +4,13 @@ import { ChangeEvent, useState } from "react";
 import { Formik, Form } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
-import { useAppSelector } from "@/stores/hooks";
-import { userData } from "@/stores/reducers/authenReducer";
+import { useAppDispatch, useAppSelector } from "@/stores/hooks";
+import { addFamCode, userData } from "@/stores/reducers/authenReducer";
 import { JoinFamily } from "@/services/family/Family.Services";
 import AlertMessage from "@/components/notification/AlertMessage";
 
 export default function JoinFamilyPage() {
+  const dispatch = useAppDispatch();
   const user = useAppSelector(userData);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,7 +45,8 @@ export default function JoinFamilyPage() {
         type: "success",
         title: res.message,
       });
-      navigate("/family", { state: res.data.famCode });
+      dispatch(addFamCode({ famCode: res.data.famCode }));
+      navigate("/family", { state: { famCode: res.data.famCode } });
     }
   }
 

@@ -3,14 +3,15 @@ import AlertMessage from "@/components/notification/AlertMessage";
 import TextField from "@/components/text-field/TextField";
 import UploadFile from "@/components/upload-file/UploadFile";
 import { CreateFamily } from "@/services/family/Family.Services";
-import { useAppSelector } from "@/stores/hooks";
-import { userData } from "@/stores/reducers/authenReducer";
+import { useAppDispatch, useAppSelector } from "@/stores/hooks";
+import { addFamCode, userData } from "@/stores/reducers/authenReducer";
 import { Form, Formik } from "formik";
 import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
 
 export default function CreateFamilyPage() {
+  const dispatch = useAppDispatch();
   const user = useAppSelector(userData);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
@@ -57,7 +58,8 @@ export default function CreateFamilyPage() {
         type: "success",
         title: res.message,
       });
-      navigate("/family", { state: res.data.famCode });
+      dispatch(addFamCode({ famCode: res.data.famCode }));
+      navigate("/family", { state: { famCode: res.data.famCode } });
     }
   }
 

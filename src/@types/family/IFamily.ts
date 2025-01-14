@@ -1,4 +1,4 @@
-import { IFile } from "../global";
+import { IFile } from '../global';
 
 export interface IFormFamily {
   usrId: number;
@@ -39,4 +39,8 @@ export interface IFormJoinFamily {
   nickName: string;
   roleId: number;
   usrProfile: string;
+}
+
+export interface IFamilyStateLocation {
+  famData: IFamilyData | null;
 }
