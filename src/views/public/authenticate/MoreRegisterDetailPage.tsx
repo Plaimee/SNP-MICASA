@@ -99,6 +99,12 @@ export default function MoreRegisterDetailPage() {
         title: res.message,
       });
       navigate("/login", { state: res.data });
+    } else {
+      AlertMessage({
+        type: "warning",
+        title: "ลงทะเบียนไม่สำเร็จ",
+        text: res.message
+      });
     }
   }
 
