@@ -13,6 +13,7 @@ import ActivityPage from "@/views/private/ActivityPage";
 import PendingPage from "@/views/private/PendingPage";
 import SuccessPage from "@/views/private/SuccessPage";
 import FailedPage from "@/views/private/FailedPage";
+import AllStatusPage from "@/views/private/status/AllStatusPage";
 
 export const publicRoutes: RouteObject[] = [
   { path: "*", element: <></> },
@@ -30,6 +31,7 @@ export const privateRoutes: RouteObject[] = [
   { path: "/family/join", element: <JoinFamilyPage /> },
   { path: "/family/member", element: <FamilyMemberPage /> },
   { path: "/activity", element: <ActivityPage /> },
+  { path: "/activity/status", element: <AllStatusPage /> },
   { path: "/activity/pending", element: <PendingPage /> },
   { path: "/activity/success", element: <SuccessPage /> },
   { path: "/activity/failed", element: <FailedPage /> },
