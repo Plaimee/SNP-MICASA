@@ -2,7 +2,7 @@ import {
   IFormCreateAccount,
   IFormRegister,
 } from "@/@types/authentication/IRegister";
-import { IStateLocationRegister } from "@/@types/authentication/IStateLocation";
+import { IStateLocationRegister } from "@/@types/IStateLocation";
 import { IOptionDDL } from "@/@types/global";
 import Dropdown from "@/components/dropdown/Dropdown";
 import TextField from "@/components/text-field/TextField";
@@ -12,14 +12,28 @@ import { ChangeEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
 import { genders, familyRole } from "@/jsondata/global.json";
-import { Registeration } from "@/services/authenticate/Authenticate.Services";
+import { Registration } from "@/services/authenticate/Authenticate.Services";
 import AlertMessage from "@/components/notification/AlertMessage";
+import { ReadFamily } from "@/services/family/Family.Services";
+import { IFamilyData } from "@/@types/family/IFamily";
+import LeaderCard from "@/components/leader-card/LeaderCard";
 
 export default function MoreRegisterDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { account }: IStateLocationRegister = location.state || {};
+  const [famData, setFamData] = useState<IFamilyData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  async function readFamily(famCode: string) {
+    // setLoading(true);
+    const res = await ReadFamily(famCode);
+    // setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      setFamData(res.data);
+    }
+  }
+  console.log(famData);
 
   const validate = Yup.object({
     fname: Yup.string().required("กรุณากรอกชื่อ"),
@@ -91,19 +105,19 @@ export default function MoreRegisterDetailPage() {
   async function submitForm(values: IFormRegister) {
     const data = createFormData(values, account);
     setLoading(true);
-    const res = await Registeration(data);
+    const res = await Registration(data);
     setLoading(false);
     if (res && res.statusCode === 201 && res.taskStatus) {
       AlertMessage({
         type: "success",
         title: res.message,
       });
-      navigate("/login", { state: res.data });
+      navigate("/login", { state: { ...res.data, famCode: values.famCode } });
     } else {
       AlertMessage({
         type: "warning",
         title: "ลงทะเบียนไม่สำเร็จ",
-        text: res.message
+        text: res.message,
       });
     }
   }
@@ -126,12 +140,13 @@ export default function MoreRegisterDetailPage() {
           lname: "",
           gender: "",
           familyRole: "",
+          famCode: "",
         }}
         onSubmit={(values: IFormRegister) => submitForm(values)}
       >
         {({ setFieldValue, values, touched, errors }) => (
           <Form className="flex justify-center">
-            <div className="wrap-items-center md:w-6/12">
+            <div className="wrap-items-center space-y-1 md:w-6/12">
               <div className="w-full pad-main">
                 <UploadFile
                   accept=".jpg, .png, .jpeg"
@@ -199,7 +214,44 @@ export default function MoreRegisterDetailPage() {
                   error={errors.familyRole}
                 />
               </div>
-              <div className="container-button pad-main mt-3">
+              <div className="flex w-full pad-main items-center">
+                <span className="w-full h-1 border-b border-gray opacity-50"></span>
+                <span className="w-full text-center px-1">
+                  มีครอบครัวแล้วหรือยัง
+                </span>
+                <span className="w-full h-1 border-b border-gray opacity-50"></span>
+              </div>
+              <div className="w-full pad-main">
+                <TextField
+                  label="รหัสครอบครัว"
+                  name="famCode"
+                  id="famCode"
+                  value={values.famCode}
+                  onChange={async (e: ChangeEvent<HTMLInputElement>) => {
+                    setFieldValue("famCode", e.target.value);
+                    await readFamily(e.target.value);
+                    if (e.target.value === "") {
+                      setFamData(null);
+                    }
+                  }}
+                />
+              </div>
+              <div className="w-full">
+                {famData !== null ? (
+                  <LeaderCard
+                    data={{
+                      id: famData.id,
+                      img: famData.profile,
+                      famName: famData.famName,
+                      rank: 0,
+                      activity: 0,
+                    }}
+                  />
+                ) : (
+                  "ไม่พบข้อมูลครอบครัว"
+                )}
+              </div>
+              <div className="container-button pad-main">
                 <button
                   disabled={loading}
                   type="submit"

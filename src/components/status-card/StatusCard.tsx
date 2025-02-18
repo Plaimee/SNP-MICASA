@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export interface IStatusCard {
@@ -27,20 +26,17 @@ export default function StatusCard({ data }: IStatusCard) {
     }
   })();
 
-  const [bgColor, setBgColor] = useState<string>(initialColors.bgColor);
-  const [textColor, setTextColor] = useState<string>(initialColors.textColor);
-
   return (
     <Link
       to={data.path}
-      className={`flex flex-row justify-between w-full ${bgColor} rounded-md p-3`}
+      className={`flex flex-row justify-between w-full ${initialColors.bgColor} rounded-md p-3`}
     >
       <div className="flex flex-col space-y-1">
         <span className="text-body3 font-semibold">{data.title}</span>
         <p className="text-small text-gray">{data.description}</p>
       </div>
 
-      <h3 className={`text-center items-center ${textColor}`}>
+      <h3 className={`text-center items-center ${initialColors.textColor}`}>
         {data.amount} กิจกรรม
       </h3>
     </Link>

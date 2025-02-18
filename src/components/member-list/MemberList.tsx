@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export interface IMemberList {
   data: IDataMemberList;
 }
@@ -24,14 +22,12 @@ export default function MemberList({ data }: IMemberList) {
     }
   })();
 
-  const [bgColor, setBgColor] = useState<string>(initialColors.bgColor);
-  const [textColor, setTextColor] = useState<string>(initialColors.textColor);
   return (
     <div
-      className={`flex flex-row justify-between text-center w-full p-3 rounded-md ${bgColor}`}
+      className={`flex flex-row justify-between text-center w-full p-3 rounded-md ${initialColors.bgColor}`}
     >
       <div className="text-body1 font-semibold text-black">{data.nickName}</div>
-      <div className={`text-h3 font-bold ${textColor}`}>
+      <div className={`text-h3 font-bold ${initialColors.textColor}`}>
         {data.actAmount} กิจกรรม
       </div>
     </div>

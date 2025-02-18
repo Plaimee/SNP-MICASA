@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export interface ILeaderCard {
   data: IDataLeaderCard;
 }
@@ -26,11 +24,9 @@ export default function LeaderCard({ data }: ILeaderCard) {
     }
   })();
 
-  const [bgColor, setBgColor] = useState<string>(initialColors.bgColor);
-  const [textColor, setTextColor] = useState<string>(initialColors.textColor);
   return (
     <div
-      className={`flex flex-row justify-between w-full ${bgColor} rounded-md p-3 my-2`}
+      className={`flex flex-row justify-between w-full ${initialColors.bgColor} rounded-md p-3 my-2`}
     >
       <div className="flex space-x-2">
         <img
@@ -40,14 +36,20 @@ export default function LeaderCard({ data }: ILeaderCard) {
         />
 
         <div className="flex flex-col space-y-1">
-          <span className="text-small text-gray">อันดับ {data.rank}</span>
+          <span
+            className={`${data.rank !== 0 ? "text-small text-gray" : "hidden"}`}
+          >
+            อันดับ {data.rank}
+          </span>
           <p className="text-body3 font-medium">{data.famName}</p>
         </div>
       </div>
 
-      <h3 className={`text-center items-center ${textColor}`}>
-        {data.activity} กิจกรรม
-      </h3>
+      {data.activity !== 0 && (
+        <h3 className={`text-center items-center ${initialColors.textColor}`}>
+          {data.activity} กิจกรรม
+        </h3>
+      )}
     </div>
   );
 }

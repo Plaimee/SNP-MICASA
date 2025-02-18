@@ -2,15 +2,18 @@ import { IFormJoinFamily } from "@/@types/family/IFamily";
 import TextField from "@/components/text-field/TextField";
 import { ChangeEvent, useState } from "react";
 import { Formik, Form } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "Yup";
 import { useAppDispatch, useAppSelector } from "@/stores/hooks";
 import { addFamCode, userData } from "@/stores/reducers/authenReducer";
 import { JoinFamily } from "@/services/family/Family.Services";
 import AlertMessage from "@/components/notification/AlertMessage";
+import { IStateLocationJoinFamily } from "@/@types/IStateLocation";
 
 export default function JoinFamilyPage() {
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const { famCode }: IStateLocationJoinFamily = location.state || {};
   const user = useAppSelector(userData);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
@@ -64,7 +67,7 @@ export default function JoinFamilyPage() {
         validationSchema={validate}
         initialValues={{
           usrId: user?.id ?? 0,
-          famCode: "",
+          famCode: famCode ?? "",
           nickName: "",
           roleId: user?.roleId ?? 0,
           usrProfile: user?.profile ?? "",

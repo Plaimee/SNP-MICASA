@@ -14,7 +14,7 @@ export default function LoginPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { email, password } = location.state || {};
+  const { email, password, famCode } = location.state || {};
   const [loading, setLoading] = useState<boolean>(false);
 
   async function submitForm(values: IFormInitial) {
@@ -27,7 +27,11 @@ export default function LoginPage() {
         title: res.message,
       });
       dispatch(loginSuccess(res.data));
-      navigate("/home");
+      if (famCode) {
+        navigate("/family/join", { state: { famCode: famCode } });
+      } else {
+        navigate("/home");
+      }
     } else {
       AlertMessage({
         type: "warning",

@@ -12,6 +12,7 @@ export interface IFormRegister {
   lname: string;
   gender: string;
   familyRole: string;
+  famCode: string;
 }
 
 export interface IFormDataRegister {

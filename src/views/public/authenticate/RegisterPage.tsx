@@ -1,5 +1,5 @@
 import { IFormCreateAccount } from "@/@types/authentication/IRegister";
-import { IStateLocationRegister } from "@/@types/authentication/IStateLocation";
+import { IStateLocationRegister } from "@/@types/IStateLocation";
 import TextField from "@/components/text-field/TextField";
 import { Form, Formik } from "formik";
 import { ChangeEvent } from "react";
@@ -14,7 +14,9 @@ export default function RegisterPage() {
   const validate = Yup.object({
     email: Yup.string().email().required("กรุณากรอกอีเมล์"),
     password: Yup.string().required("กรุณากรอกรหัสผ่าน"),
-    confirmPassword: Yup.string().oneOf([Yup.ref("password"), undefined], "รหัสผ่านไม่ตรงกัน").required("กรุณายืนยันรหัสผ่าน")
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), undefined], "รหัสผ่านไม่ตรงกัน")
+      .required("กรุณายืนยันรหัสผ่าน"),
   });
 
   return (
@@ -29,11 +31,13 @@ export default function RegisterPage() {
         initialValues={{
           email: account ? account.email : "",
           password: account ? account.password : "",
-          confirmPassword: account ? account.confirmPassword : ""
+          confirmPassword: account ? account.confirmPassword : "",
         }}
-        onSubmit={(values: IFormCreateAccount) => navigate('/register/more-detail', { state: { account: values } })}
+        onSubmit={(values: IFormCreateAccount) =>
+          navigate("/register/more-detail", { state: { account: values } })
+        }
       >
-        {({ setFieldValue, values, touched, errors }) =>
+        {({ setFieldValue, values, touched, errors }) => (
           <Form className="flex justify-center">
             <div className="wrap-items-center w-full md:w-6/12">
               <div className="w-full pad-main">
@@ -43,7 +47,9 @@ export default function RegisterPage() {
                   id="email"
                   name="email"
                   value={values.email}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("email", e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setFieldValue("email", e.target.value)
+                  }
                   touched={touched.email}
                   error={errors.email}
                 />
@@ -55,7 +61,9 @@ export default function RegisterPage() {
                   id="password"
                   name="password"
                   value={values.password}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("password", e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setFieldValue("password", e.target.value)
+                  }
                   touched={touched.password}
                   error={errors.password}
                 />
@@ -67,13 +75,17 @@ export default function RegisterPage() {
                   id="confirmPassword"
                   name="confirmPassword"
                   value={values.confirmPassword}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setFieldValue("confirmPassword", e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setFieldValue("confirmPassword", e.target.value)
+                  }
                   touched={touched.confirmPassword}
                   error={errors.confirmPassword}
                 />
               </div>
               <div className="container-button mt-3">
-                <button type="submit" className="btn-bfl btn-main">ถัดไป</button>
+                <button type="submit" className="btn-bfl btn-main">
+                  ถัดไป
+                </button>
               </div>
               <div className="flex w-full pad-main items-center">
                 <span className="w-full h-1 border-b border-gray opacity-50"></span>
@@ -81,10 +93,15 @@ export default function RegisterPage() {
                 <span className="w-full h-1 border-b border-gray opacity-50"></span>
               </div>
 
-              <p className="pad-main">มีบัญชีอยู่แล้วใช่ไหม? <Link to='/login' className="text-org-main underline pl-2">เข้าสู่ระบบ</Link></p>
+              <p className="pad-main">
+                มีบัญชีอยู่แล้วใช่ไหม?{" "}
+                <Link to="/login" className="text-org-main underline pl-2">
+                  เข้าสู่ระบบ
+                </Link>
+              </p>
             </div>
           </Form>
-        }
+        )}
       </Formik>
     </div>
   );
