@@ -42,23 +42,30 @@ export default function MoreRegisterDetailPage() {
     familyRole: Yup.string().required("กรุณาเลือกบทบาท"),
     profile: Yup.object().shape({
       file: Yup.mixed<File | string>()
-        .test("fileValidation", "กรุณาอัปโหลดรูปโปรไฟล์", (value, context) => {
-          // If there's an existing filename or URL, consider it valid
-          if (
-            context.parent.filename ||
-            (typeof value === "string" && value.trim() !== "")
-          ) {
-            return true;
-          }
+        .test(
+          "fileValidation",
+          "กรุณาอัปโหลดรูปโปรไฟล์",
+          (
+            value: string | File | undefined,
+            context: Yup.TestContext<Yup.AnyObject>
+          ) => {
+            // If there's an existing filename or URL, consider it valid
+            if (
+              context.parent.filename ||
+              (typeof value === "string" && value.trim() !== "")
+            ) {
+              return true;
+            }
 
-          // For new file uploads
-          if (value instanceof File) {
-            return value.size > 0;
-          }
+            // For new file uploads
+            if (value instanceof File) {
+              return value.size > 0;
+            }
 
-          // If no file and no filename, it's invalid
-          return false;
-        })
+            // If no file and no filename, it's invalid
+            return false;
+          }
+        )
         .test("fileSize", "ขนาดไฟล์ต้องไม่เกิน 10MB", (value) => {
           // Skip size check if it's an existing image URL or filename
           if (typeof value === "string" || !value) return true;
