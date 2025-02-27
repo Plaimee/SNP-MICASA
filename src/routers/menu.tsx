@@ -4,15 +4,12 @@ import Home from "@/views/private/HomePage";
 import LoginPage from "@/views/public/authenticate/LoginPage";
 import RegisterPage from "@/views/public/authenticate/RegisterPage";
 import MoreRegisterDetailPage from "@/views/public/authenticate/MoreRegisterDetailPage";
-import FamilyPage from "@/views/private/FamilyPage";
-import CreateFamilyPage from "@/views/private/CreateFamilyPage";
-import ProfilePage from "@/views/private/ProfilePage";
-import JoinFamilyPage from "@/views/private/JoinFamilyPage";
-import FamilyMemberPage from "@/views/private/FamilyMemberPage";
-import ActivityPage from "@/views/private/ActivityPage";
-import PendingPage from "@/views/private/PendingPage";
-import SuccessPage from "@/views/private/SuccessPage";
-import FailedPage from "@/views/private/FailedPage";
+import FamilyPage from "@/views/private/family/FamilyPage";
+import CreateFamilyPage from "@/views/private/family/CreateFamilyPage";
+import ProfilePage from "@/views/private/profile/ProfilePage";
+import JoinFamilyPage from "@/views/private/family/JoinFamilyPage";
+import FamilyMemberPage from "@/views/private/family/FamilyMemberPage";
+import ActivityPage from "@/views/private/family/activities/ActivityPage";
 import AllStatusPage from "@/views/private/status/AllStatusPage";
 
 export const publicRoutes: RouteObject[] = [
@@ -32,8 +29,5 @@ export const privateRoutes: RouteObject[] = [
   { path: "/family/member", element: <FamilyMemberPage /> },
   { path: "/activity", element: <ActivityPage /> },
   { path: "/activity/status", element: <AllStatusPage /> },
-  { path: "/activity/pending", element: <PendingPage /> },
-  { path: "/activity/success", element: <SuccessPage /> },
-  { path: "/activity/failed", element: <FailedPage /> },
   { path: "/profile", element: <ProfilePage /> },
 ];

@@ -78,6 +78,16 @@ export default function GuestPage() {
     },
   ];
 
+  // const shareOnFacebook = () => {
+  //   const postText = "นี่คือโพสต์ของฉัน! 🎉";
+  //   const imageUrl = "https://yourwebsite.com/image.jpg"; // ต้องเป็น URL ที่เข้าถึงได้
+  //   const postUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+  //     imageUrl
+  //   )}&quote=${encodeURIComponent(postText)}`;
+
+  //   window.open(postUrl, "_blank");
+  // };
+
   return (
     <div className="pb-3">
       <div className="h-56 bg-orange-400 p-5 gap-2 bg-[url('../assets/Banner.svg')]">

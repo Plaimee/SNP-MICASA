@@ -243,7 +243,7 @@ export default function MoreRegisterDetailPage() {
                   }}
                 />
               </div>
-              <div className="w-full">
+              <div className="w-full pad-main">
                 {famData !== null ? (
                   <LeaderCard
                     data={{

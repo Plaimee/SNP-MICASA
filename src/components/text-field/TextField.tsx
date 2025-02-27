@@ -1,7 +1,23 @@
-import { TextFieldTypes } from "@/@types/global";
+import { TextAreaFieldTypes, TextFieldTypes } from "@/@types/global";
 import { ChangeEvent, useState } from "react";
 
-export default function TextField({ groupClass, label, inputClass, type, name, id, placeHolder, value, onChange, onChangeTel, required, maxLength, pattern, touched, error }: TextFieldTypes) {
+export default function TextField({
+  groupClass,
+  label,
+  inputClass,
+  type,
+  name,
+  id,
+  placeHolder,
+  value,
+  onChange,
+  onChangeTel,
+  required,
+  maxLength,
+  pattern,
+  touched,
+  error,
+}: TextFieldTypes) {
   const [formattedValue, setFormattedValue] = useState(value);
 
   function formatPhoneNumber(input: string) {
@@ -31,7 +47,9 @@ export default function TextField({ groupClass, label, inputClass, type, name, i
 
   return (
     <div className={`input-group ${groupClass}`}>
-      <label htmlFor={label} className="w-full pb-2 font-medium">{label}</label>
+      <label htmlFor={label} className="w-full pb-2 font-medium">
+        {label}
+      </label>
       <input
         type={type}
         name={name}
@@ -40,9 +58,48 @@ export default function TextField({ groupClass, label, inputClass, type, name, i
         value={type == "tel" ? formattedValue : value}
         onChange={type === "tel" ? handleInputChange : onChange}
         required={required ? required : false}
-        className={`${inputClass} ${touched ? (error ? 'inputError' : 'inputSuccess') : 'inputDefault' } `}
+        className={`${inputClass} ${
+          touched ? (error ? "inputError" : "inputSuccess") : "inputDefault"
+        } `}
         maxLength={maxLength}
         pattern={pattern}
+      />
+    </div>
+  );
+}
+
+export function TextAreaField({
+  groupClass,
+  label,
+  inputClass,
+  name,
+  id,
+  placeHolder,
+  value,
+  onChange,
+  required,
+  maxLength,
+  touched,
+  error,
+  rows,
+}: TextAreaFieldTypes) {
+  return (
+    <div className={`input-group ${groupClass}`}>
+      <label htmlFor={label} className="w-full pb-2 font-medium">
+        {label}
+      </label>
+      <textarea
+        name={name}
+        id={id}
+        placeholder={placeHolder}
+        value={value}
+        onChange={onChange}
+        required={required ? required : false}
+        className={`${inputClass} ${
+          touched ? (error ? "inputError" : "inputSuccess") : "inputDefault"
+        } `}
+        maxLength={maxLength}
+        rows={rows}
       />
     </div>
   );

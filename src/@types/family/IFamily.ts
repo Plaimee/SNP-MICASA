@@ -41,10 +41,6 @@ export interface IFormJoinFamily {
   usrProfile: string;
 }
 
-export interface IFamilyStateLocation {
-  famData: IFamilyData | null;
-}
-
 export interface IFormActivityDuty {
   famDuty: string;
 }

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { IFamilyMember, IFamilyStateLocation } from "@/@types/family/IFamily";
+import { IFamilyMember } from "@/@types/family/IFamily";
+import { IFamilyStateLocation } from "@/@types/IStateLocation";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { familyRole } from "@/jsondata/global.json";
@@ -14,7 +15,7 @@ export default function FamilyMemberPage() {
 
   useEffect(() => {
     if (famData === null) {
-      navigate('/family');
+      navigate("/family");
     }
   }, [famData]);
 
@@ -42,23 +43,42 @@ export default function FamilyMemberPage() {
           <div className="text-body2 font-semibold">สมาชิกในครอบครัว</div>
           <div className="">{famData?.famMember.length ?? 0}</div>
         </div>
-        {famData && famData.famMember.length > 0 && famData.famMember.map((mem: IFamilyMember, idx: number) =>
-          <div key={idx} className="p-3 border border-gray rounded-[10px]">
-            <div className="flex items-center gap-x-2 justify-between">
-              <div className="flex items-center gap-x-2">
-                <img src={mem.usrImg} alt="" className="w-20 h-20 rounded-full" />
-                <div className="flex flex-col">
-                  <h3>{mem.nickName}</h3>
-                  <p>{familyRole.find(f => f.id === mem.roleId)?.name} {idx === 0 && "(Admin)"}</p>
+        {famData &&
+          famData.famMember.length > 0 &&
+          famData.famMember.map((mem: IFamilyMember, idx: number) => (
+            <div key={idx} className="p-3 border border-gray rounded-[10px]">
+              <div className="flex items-center gap-x-2 justify-between">
+                <div className="flex items-center gap-x-2">
+                  <img
+                    src={mem.usrImg}
+                    alt=""
+                    className="w-20 h-20 rounded-full"
+                  />
+                  <div className="flex flex-col">
+                    <h3>{mem.nickName}</h3>
+                    <p>
+                      {familyRole.find((f) => f.id === mem.roleId)?.name}{" "}
+                      {idx === 0 && "(Admin)"}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className={`${
+                    user?.id === parseInt(famData?.famMember[0].id)
+                      ? "flex gap-x-2"
+                      : "hidden"
+                  }`}
+                >
+                  <button type="button" className="btn-bft btn-main">
+                    <i className="fa-solid fa-pen" />
+                  </button>
+                  <button type="button" className="btn-bft btn-sub">
+                    <i className="fa-solid fa-trash" />
+                  </button>
                 </div>
               </div>
-              <div className={`${user?.id === parseInt(famData?.famMember[0].id) ? "flex gap-x-2" : "hidden"}`}>
-                <button type="button" className="btn-bft btn-main"><i className="fa-solid fa-pen" /></button>
-                <button type="button" className="btn-bft btn-sub"><i className="fa-solid fa-trash" /></button>
-              </div>
             </div>
-          </div>
-        )}
+          ))}
       </div>
     </div>
   );
