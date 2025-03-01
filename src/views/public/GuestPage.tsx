@@ -1,59 +1,61 @@
-import FeedCard, { IDataFeedCard } from "@/components/feed-card/FeedCard";
+import { IPostData } from "@/@types/post/IPost";
+import FeedCard from "@/components/feed-card/FeedCard";
 import LeaderCard, {
   IDataLeaderCard,
 } from "@/components/leader-card/LeaderCard";
+import AlertMessage from "@/components/notification/AlertMessage";
+import { ReadAll } from "@/services/post/Post.Services";
+import { useEffect, useState } from "react";
 // import MenuCard, { IDataMenuCard } from "@/components/menu-card/MenuCard";
 import { useNavigate } from "react-router-dom";
 
 export default function GuestPage() {
   const navigate = useNavigate();
-  const feeds = [
-    {
-      id: 1,
-      usrName: "ครอบครัวหมูเด้ง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-    {
-      id: 2,
-      usrName: "ครอบครัวจารย์แดง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-    {
-      id: 3,
-      usrName: "ครอบครัวลีน่าจัง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-  ];
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<IPostData[]>([]);
+
+  useEffect(() => {
+    readAllPost();
+  }, []);
+
+  async function readAllPost() {
+    setLoading(true);
+    const res = await ReadAll();
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      const sortedData = res.data.sort(
+        (a: IPostData, b: IPostData) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      // Group posts by post_type
+      const groupedPosts: Record<string, IPostData[]> = {};
+      sortedData.forEach((post: IPostData) => {
+        if (!groupedPosts[post.post_type]) {
+          groupedPosts[post.post_type] = [];
+        }
+        groupedPosts[post.post_type].push(post);
+      });
+
+      const getRandomPost = (
+        postList: IPostData[] | undefined
+      ): IPostData | null => {
+        if (!postList || postList.length === 0) return null;
+        return postList[Math.floor(Math.random() * postList.length)];
+      };
+
+      const selectedPosts: IPostData[] = [];
+      const typesOrder = ["1", "2", "3"];
+
+      typesOrder.forEach((type) => {
+        const randomPost = getRandomPost(groupedPosts[type]);
+        if (randomPost) selectedPosts.push(randomPost);
+      });
+
+      setData(selectedPosts);
+    }
+  }
+
   const leaders = [
     {
       id: 1,
@@ -104,13 +106,22 @@ export default function GuestPage() {
           <h3 className="font-medium text-[16px]">สมัครสมาชิก</h3>
         </button>
       </div>
-
+      {loading}
       <div className="space-y-2 pad-main">
         <h3 className="text-body2">การแบ่งปัญกิจกรรม</h3>
         <div className="wrap-items-center">
-          {feeds.map((feed: IDataFeedCard, index: number) => (
-            <div key={index} className="w-full">
-              <FeedCard data={feed} />
+          {data.map((values: IPostData, index: number) => (
+            <div
+              key={index}
+              className="w-full"
+              onClick={() =>
+                AlertMessage({
+                  type: "warning",
+                  title: "กรุณาสมัครสมาชิก",
+                })
+              }
+            >
+              <FeedCard data={values} mode="guest" />
             </div>
           ))}
         </div>

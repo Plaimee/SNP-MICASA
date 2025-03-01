@@ -1,20 +1,21 @@
 import * as Yup from "Yup";
 import { IOptionDDL } from "@/@types/global";
-import { IFormCreatePost } from "@/@types/post/IPost";
+import { IFormCreatePost, IPostData } from "@/@types/post/IPost";
 import Dropdown from "@/components/dropdown/Dropdown";
-import FeedCard, { IDataFeedCard } from "@/components/feed-card/FeedCard";
+import FeedCard from "@/components/feed-card/FeedCard";
 import LeaderCard, {
   IDataLeaderCard,
 } from "@/components/leader-card/LeaderCard";
 import { useAppSelector } from "@/stores/hooks";
 import { userData } from "@/stores/reducers/authenReducer";
-import { ChangeEvent, Fragment, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import { postType } from "@/jsondata/global.json";
 import { UploadFileSquare } from "@/components/upload-file/UploadFile";
 import { TextAreaField } from "@/components/text-field/TextField";
-import { CreatePost } from "@/services/post/Post.Services";
+import { CreatePost, ReadAll, ReadById } from "@/services/post/Post.Services";
 import AlertMessage from "@/components/notification/AlertMessage";
+import { useLocation } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
@@ -58,53 +59,30 @@ export default function HomePage() {
 }
 
 export function AllPostPage() {
-  const feeds = [
-    {
-      id: 1,
-      usrName: "ครอบครัวหมูเด้ง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-    {
-      id: 2,
-      usrName: "ครอบครัวจารย์แดง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-    {
-      id: 3,
-      usrName: "ครอบครัวลีน่าจัง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-  ];
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<IPostData[]>([]);
+
+  useEffect(() => {
+    readAllPost();
+  }, []);
+
+  async function readAllPost() {
+    setLoading(true);
+    const res = await ReadAll();
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      const sortedData = res.data
+        .map((post: IPostData) => ({
+          ...post,
+          post_likes: Array.isArray(post.post_likes) ? post.post_likes : [],
+        }))
+        .sort(
+          (a: IPostData, b: IPostData) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      setData(sortedData);
+    }
+  }
 
   const leaders = [
     {
@@ -134,13 +112,19 @@ export function AllPostPage() {
     <Fragment>
       <div className="space-y-2">
         <h3 className="text-body2">การแบ่งปัญกิจกรรม</h3>
-        <div className="wrap-items-center">
-          {feeds.map((menu: IDataFeedCard, index: number) => (
-            <div key={index} className="w-full">
-              <FeedCard data={menu} />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <i className="fa-solid fa-spinner animate-spin text-[60px]" />
+        ) : data.length === 0 ? (
+          <div className="text-gray-500">ไม่มีโพสต์ในระบบ</div>
+        ) : (
+          <div className="wrap-items-center">
+            {data.map((values: IPostData, index: number) => (
+              <div key={index} className="w-full">
+                <FeedCard data={values} mode="default" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -158,58 +142,40 @@ export function AllPostPage() {
 }
 
 export function PostByUserId() {
+  const user = useAppSelector(userData);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<IPostData[]>([]);
+  const location = useLocation();
+  const { user_id } = location.state || {};
 
-  const feeds = [
-    {
-      id: 1,
-      usrName: "ครอบครัวหมูเด้ง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-    {
-      id: 2,
-      usrName: "ครอบครัวจารย์แดง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-    {
-      id: 3,
-      usrName: "ครอบครัวลีน่าจัง",
-      usrImg:
-        "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      status: "โพสต์เมื่อ 1 วันที่แล้ว",
-      image:
-        "https://images.unsplash.com/photo-1730304300285-2f8735f48a9d?q=80&w=1986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "ขนมปังเนยถั่ว",
-      description:
-        "เซอร์วิสซัพพลายเออร์ไนท์ ไฟลท์ดีพาร์ทเมนท์ตรวจสอบดยุก แบคโฮ มาร์กไฟต์เคส ครัวซอง เยนเดโม เกสต์เฮาส์ปิกอัพ ",
-      commentCount: 150,
-      likeCount: 7600,
-      shareCount: 3,
-    },
-  ];
+  useEffect(() => {
+    if (user_id || user?.id) {
+      readPost(user_id ?? user?.id);
+    }
+  }, [user_id, user]);
+
+  async function readPost(user_id: number) {
+    setLoading(true);
+    const res = await ReadById(user_id);
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      const sortedData = res.data
+        .map((post: IPostData) => ({
+          ...post,
+          post_likes: Array.isArray(post.post_likes) ? post.post_likes : [],
+        }))
+        .sort(
+          (a: IPostData, b: IPostData) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      setData(sortedData);
+    }
+  }
 
   return (
     <Fragment>
+      {isModalOpen && <UploadPost onClose={() => setIsModalOpen(false)} />}
       <div className="space-y-2">
         <button
           type="button"
@@ -219,16 +185,20 @@ export function PostByUserId() {
           เพิ่มโพสต์
         </button>
         <div className="text-body2 font-semibold">โพสต์ของคุณ</div>
-        <div className="wrap-items-center">
-          {feeds.map((menu: IDataFeedCard, index: number) => (
-            <div key={index} className="w-full">
-              <FeedCard data={menu} />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <i className="fa-solid fa-spinner animate-spin text-[60px]" />
+        ) : data.length === 0 ? (
+          <div className="text-gray-500">คุณยังไม่มีโพสต์</div>
+        ) : (
+          <div className="wrap-items-center">
+            {data.map((values: IPostData, index: number) => (
+              <div key={index} className="w-full">
+                <FeedCard data={values} mode="byId" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      {isModalOpen && <UploadPost onClose={() => setIsModalOpen(false)} />}
     </Fragment>
   );
 }
@@ -244,7 +214,9 @@ export function UploadPost({ onClose }: { onClose: () => void }) {
   function createFormData(values: IFormCreatePost) {
     const form = new FormData();
 
-    form.append("user_id", values.usrId.toString());
+    form.append("user_id", values.user_id.toString());
+    form.append("user_name", values.user_name);
+    form.append("user_profile", values.user_profile);
     form.append("post_type", values.postType);
     form.append("post_desc", values.postDesc);
     if (values.postImg.file instanceof File) {
@@ -290,7 +262,9 @@ export function UploadPost({ onClose }: { onClose: () => void }) {
           enableReinitialize
           validationSchema={validates}
           initialValues={{
-            usrId: user?.id ?? 0,
+            user_id: user?.id ?? 0,
+            user_name: user?.fName ?? "",
+            user_profile: user?.profile ?? "",
             postType: "",
             postDesc: "",
             postImg: {

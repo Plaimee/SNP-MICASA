@@ -28,3 +28,18 @@ export async function CreatePost(data: FormData) {
     console.log(error);
   }
 }
+
+export async function UpdateLike(postId: number, userId: number) {
+  try {
+    const response = await gateway.post(
+      `/post/${postId}/like`,
+      { userId },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
