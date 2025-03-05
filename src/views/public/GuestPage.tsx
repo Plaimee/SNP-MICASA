@@ -3,11 +3,10 @@ import FeedCard from "@/components/feed-card/FeedCard";
 import LeaderCard, {
   IDataLeaderCard,
 } from "@/components/leader-card/LeaderCard";
-import AlertMessage from "@/components/notification/AlertMessage";
 import { ReadAll } from "@/services/post/Post.Services";
 import { useEffect, useState } from "react";
-// import MenuCard, { IDataMenuCard } from "@/components/menu-card/MenuCard";
 import { useNavigate } from "react-router-dom";
+import WhiteLogo from "@/assets/white_logo.svg";
 
 export default function GuestPage() {
   const navigate = useNavigate();
@@ -28,7 +27,6 @@ export default function GuestPage() {
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
-      // Group posts by post_type
       const groupedPosts: Record<string, IPostData[]> = {};
       sortedData.forEach((post: IPostData) => {
         if (!groupedPosts[post.post_type]) {
@@ -80,21 +78,11 @@ export default function GuestPage() {
     },
   ];
 
-  // const shareOnFacebook = () => {
-  //   const postText = "นี่คือโพสต์ของฉัน! 🎉";
-  //   const imageUrl = "https://yourwebsite.com/image.jpg"; // ต้องเป็น URL ที่เข้าถึงได้
-  //   const postUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-  //     imageUrl
-  //   )}&quote=${encodeURIComponent(postText)}`;
-
-  //   window.open(postUrl, "_blank");
-  // };
-
   return (
     <div className="pb-3">
       <div className="h-56 bg-orange-400 p-5 gap-2 bg-[url('../assets/Banner.svg')]">
         <div className="flex items-center space-x-2">
-          <span className="text-[32px] font-bold text-white">Micasa</span>
+          <img src={WhiteLogo} alt="Logo" className="w-32" />
         </div>
         <div className="font-bold text-[20px] text-white py-2">
           เสริมสร้างความสัมพันธ์ในครอบครัวผ่านกิจกรรมสุดพิเศษ
@@ -111,16 +99,7 @@ export default function GuestPage() {
         <h3 className="text-body2">การแบ่งปัญกิจกรรม</h3>
         <div className="wrap-items-center">
           {data.map((values: IPostData, index: number) => (
-            <div
-              key={index}
-              className="w-full"
-              onClick={() =>
-                AlertMessage({
-                  type: "warning",
-                  title: "กรุณาสมัครสมาชิก",
-                })
-              }
-            >
+            <div key={index} className="w-full">
               <FeedCard data={values} mode="guest" />
             </div>
           ))}

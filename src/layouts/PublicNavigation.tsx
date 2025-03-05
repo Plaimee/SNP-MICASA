@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Logo from "@/assets/Logo.png";
+import Logo from "@/assets/Logo.svg";
 
 export default function PublicNavigation() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -52,23 +52,31 @@ export default function PublicNavigation() {
 
           {/* Menu */}
           <div
-            className={`${showMenu
-              ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden"
-              : "hidden"
-              }`}
+            className={`${
+              showMenu
+                ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20 md:hidden"
+                : "hidden"
+            }`}
             aria-hidden="false"
             onClick={handleOutsideClick} // ตรวจจับการคลิกที่พื้นหลัง
           >
             <div className="menu-container">
-
               <ul className="flex flex-col w-full space-y-4 p-4 text-gray-800">
-                {menu.map((item, i) =>
+                {menu.map((item, i) => (
                   <li className="w-full" key={i}>
-                    <Link to={item.path} className={`${pathname === item.path ? "bg-org-main font-semibold text-white" : "text-black"} flex w-full rounded-md p-2`} onClick={() => setShowMenu(false)}>
+                    <Link
+                      to={item.path}
+                      className={`${
+                        pathname === item.path
+                          ? "bg-org-main font-semibold text-white"
+                          : "text-black"
+                      } flex w-full rounded-md p-2`}
+                      onClick={() => setShowMenu(false)}
+                    >
                       <div className="flex w-full">{item.name}</div>
                     </Link>
                   </li>
-                )}
+                ))}
               </ul>
             </div>
           </div>

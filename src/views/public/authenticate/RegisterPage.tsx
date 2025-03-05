@@ -22,7 +22,7 @@ export default function RegisterPage() {
   return (
     <div className="wrap-items-center">
       <div className="container-title pad-main items-center">
-        <h3>สร้างบัญชี Micasa</h3>
+        <h3>สร้างบัญชี Homie</h3>
         <p>ลงทะเบียนสมัครสมาชิก</p>
       </div>
       <Formik

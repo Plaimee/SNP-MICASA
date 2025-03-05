@@ -11,12 +11,11 @@ import { userData } from "@/stores/reducers/authenReducer";
 import { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import { postType } from "@/jsondata/global.json";
-import { UploadFileSquare } from "@/components/upload-file/UploadFile";
+import UploadFile from "@/components/upload-file/UploadFile";
 import { TextAreaField } from "@/components/text-field/TextField";
 import { CreatePost, ReadAll, ReadById } from "@/services/post/Post.Services";
 import AlertMessage from "@/components/notification/AlertMessage";
 import { useLocation } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
   const [tabView, setTabView] = useState<number>(1);
@@ -24,7 +23,6 @@ export default function HomePage() {
     { id: 1, name: "หน้าฟีด" },
     { id: 2, name: "อัปโหลด" },
   ];
-  // const navigate = useNavigate();
 
   function switchTabView(tab: number) {
     switch (tab) {
@@ -318,7 +316,7 @@ export function UploadPost({ onClose }: { onClose: () => void }) {
                   />
                 </div>
                 <div className="w-full pad-main">
-                  <UploadFileSquare
+                  <UploadFile
                     accept=".jpg, .png, .jpeg"
                     clearImage={!values.postImg}
                     onFileChange={(file: File | null) => {
@@ -327,6 +325,7 @@ export function UploadPost({ onClose }: { onClose: () => void }) {
                         setFieldValue("postImg.filename", file.name);
                       }
                     }}
+                    variant="square"
                   />
                   <p className="text-red-main">
                     {errors.postImg?.file ? errors.postImg.file : ""}

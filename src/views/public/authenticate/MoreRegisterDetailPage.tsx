@@ -26,9 +26,9 @@ export default function MoreRegisterDetailPage() {
   const [loading, setLoading] = useState<boolean>(false);
 
   async function readFamily(famCode: string) {
-    // setLoading(true);
+    setLoading(true);
     const res = await ReadFamily(famCode);
-    // setLoading(false);
+    setLoading(false);
     if (res && res.statusCode === 200 && res.taskStatus) {
       setFamData(res.data);
     }
@@ -49,7 +49,6 @@ export default function MoreRegisterDetailPage() {
             value: string | File | undefined,
             context: Yup.TestContext<Yup.AnyObject>
           ) => {
-            // If there's an existing filename or URL, consider it valid
             if (
               context.parent.filename ||
               (typeof value === "string" && value.trim() !== "")
@@ -57,24 +56,20 @@ export default function MoreRegisterDetailPage() {
               return true;
             }
 
-            // For new file uploads
             if (value instanceof File) {
               return value.size > 0;
             }
 
-            // If no file and no filename, it's invalid
             return false;
           }
         )
         .test("fileSize", "ขนาดไฟล์ต้องไม่เกิน 10MB", (value) => {
-          // Skip size check if it's an existing image URL or filename
           if (typeof value === "string" || !value) return true;
 
           if (!(value instanceof File)) return false;
           return value.size <= 10 * 1024 * 1024; // 10MB
         })
         .test("fileType", "รองรับเฉพาะไฟล์ JPG, JPEG, PNG", (value) => {
-          // Skip type check if it's an existing image URL or filename
           if (typeof value === "string" || !value) return true;
 
           if (!(value instanceof File)) return false;
@@ -164,6 +159,7 @@ export default function MoreRegisterDetailPage() {
                       setFieldValue("profile.filename", file.name);
                     }
                   }}
+                  variant="circle"
                 />
                 <p className="text-red-main">
                   {errors.profile?.file ? errors.profile.file : ""}

@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { ChangeEvent, useState } from "react";
 import * as Yup from "Yup";
-import Logo from "@/assets/Logo.png";
+import Logo from "@/assets/Logo.svg";
 import TextField from "@/components/text-field/TextField";
 import { IFormInitial } from "@/@types/authentication/ILogin";
 import { useAppDispatch } from "@/stores/hooks";
@@ -50,7 +50,7 @@ export default function LoginPage() {
   return (
     <div className="wrap-items-center">
       <div className="flex justify-center items-center w-full h-[150px]">
-        <img src={Logo} alt="" className="w-full h-[120px] object-contain" />
+        <img src={Logo} alt="Logo" className="w-48 h-32 object-contain" />
       </div>
       <div className="w-full">
         <Formik

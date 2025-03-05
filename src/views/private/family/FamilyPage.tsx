@@ -1,10 +1,10 @@
 import StatusCard, {
   IDataStatusCard,
 } from "@/components/status-card/StatusCard";
-import MenuCard, { IDataMenuCard } from "@/components/menu-card/MenuCard";
+import MenuCard from "@/components/menu-card/MenuCard";
 import { Fragment, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Logo from "@/assets/Logo.png";
+import Logo from "@/assets/Logo.svg";
 import MemberList, {
   IDataMemberList,
 } from "@/components/member-list/MemberList";
@@ -12,14 +12,22 @@ import { ReadFamily } from "@/services/family/Family.Services";
 import { IFamilyData } from "@/@types/family/IFamily";
 import { useAppSelector } from "@/stores/hooks";
 import { userData } from "@/stores/reducers/authenReducer";
+import AlertMessage from "@/components/notification/AlertMessage";
+import { IMenuData } from "@/@types/menu/IMenu";
+import { ReadMenu } from "@/services/menu/Menu.Services";
 
 export default function FamilyPage() {
   const user = useAppSelector(userData);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<IFamilyData | null>(null);
+  const [menu, setMenu] = useState<IMenuData[]>([]);
   const location = useLocation();
   const { famCode } = location.state || {};
+
+  useEffect(() => {
+    readMenu();
+  }, []);
 
   useEffect(() => {
     if (famCode || user?.famCode) {
@@ -35,6 +43,25 @@ export default function FamilyPage() {
       setData(res.data);
     }
   }
+
+  async function readMenu() {
+    setLoading(true);
+    const res = await ReadMenu();
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      setMenu(res.data);
+    }
+  }
+
+  const copyFamCode = () => {
+    if (data?.famCode) {
+      navigator.clipboard.writeText(data.famCode);
+      AlertMessage({
+        type: "success",
+        title: "คัดลอกรหัสครอบครัวเรียบร้อยแล้ว!",
+      });
+    }
+  };
 
   const status = [
     {
@@ -57,78 +84,6 @@ export default function FamilyPage() {
       description: "Failed",
       amount: 0,
       path: "/activity/failed",
-    },
-  ];
-
-  const menus = [
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "โจ๊ก สูตรเร่งรัด",
-      menuType: "เมนูอาหารเช้า",
-      description:
-        "อาหารเช้าชนิด ข้าวต้มบดละเอียด นิยมใช้ข้าวสวยต้มกับน้ำซุปจนเนียน สามารถใส่เนื้อสัตว์ เช่น  หมูสับ  ตับ  หรือไข่ลวก  และปรุงรสด้วยซีอิ๊ว เกลือ โรยขิงและต้นหอมเหมาะสำหรับมื้อเช้าเพราะย่อยง่ายและอิ่มท้อง",
-      ingredient: [
-        "ข้าวสวย 1 ถ้วย",
-        "น้ำซุป (หมู/ไก่) 2-3 ถ้วย",
-        "หมูสับ 100 กรัม",
-        "ขิงซอย, ต้นหอมซอย, และไข่ลวก",
-        "ซีอิ๊วขาวหรือเกลือ",
-      ],
-      htCook: [
-        "ต้มข้าวสวยในน้ำซุปจนเนื้อเนียนเป็นโจ๊ก",
-        "ปั้นหมูสับเป็นก้อน ใส่ลงไปต้มจนสุก",
-        "ปรุงรสด้วยซีอิ๊วขาวหรือเกลือ",
-        "ตักใส่ชาม โรยขิง ต้นหอม ใส่ไข่ลวกตามชอบ",
-      ],
-      time: "15",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "โจ๊ก หัวคลอง",
-      menuType: "เมนูอาหารเช้า",
-      description:
-        "อาหารเช้าชนิด ข้าวต้มบดละเอียด นิยมใช้ข้าวสวยต้มกับน้ำซุปจนเนียน สามารถใส่เนื้อสัตว์ เช่น  หมูสับ  ตับ  หรือไข่ลวก  และปรุงรสด้วยซีอิ๊ว เกลือ โรยขิงและต้นหอมเหมาะสำหรับมื้อเช้าเพราะย่อยง่ายและอิ่มท้อง",
-      ingredient: [
-        "ข้าวสวย 1 ถ้วย",
-        "น้ำซุป (หมู/ไก่) 2-3 ถ้วย",
-        "หมูสับ 100 กรัม",
-        "ขิงซอย, ต้นหอมซอย, และไข่ลวก",
-        "ซีอิ๊วขาวหรือเกลือ",
-      ],
-      htCook: [
-        "ต้มข้าวสวยในน้ำซุปจนเนื้อเนียนเป็นโจ๊ก",
-        "ปั้นหมูสับเป็นก้อน ใส่ลงไปต้มจนสุก",
-        "ปรุงรสด้วยซีอิ๊วขาวหรือเกลือ",
-        "ตักใส่ชาม โรยขิง ต้นหอม ใส่ไข่ลวกตามชอบ",
-      ],
-      time: "15",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "โจ๊ก กู้ภัย",
-      menuType: "เมนูอาหารเช้า",
-      description:
-        "อาหารเช้าชนิด ข้าวต้มบดละเอียด นิยมใช้ข้าวสวยต้มกับน้ำซุปจนเนียน สามารถใส่เนื้อสัตว์ เช่น  หมูสับ  ตับ  หรือไข่ลวก  และปรุงรสด้วยซีอิ๊ว เกลือ โรยขิงและต้นหอมเหมาะสำหรับมื้อเช้าเพราะย่อยง่ายและอิ่มท้อง",
-      ingredient: [
-        "ข้าวสวย 1 ถ้วย",
-        "น้ำซุป (หมู/ไก่) 2-3 ถ้วย",
-        "หมูสับ 100 กรัม",
-        "ขิงซอย, ต้นหอมซอย, และไข่ลวก",
-        "ซีอิ๊วขาวหรือเกลือ",
-      ],
-      htCook: [
-        "ต้มข้าวสวยในน้ำซุปจนเนื้อเนียนเป็นโจ๊ก",
-        "ปั้นหมูสับเป็นก้อน ใส่ลงไปต้มจนสุก",
-        "ปรุงรสด้วยซีอิ๊วขาวหรือเกลือ",
-        "ตักใส่ชาม โรยขิง ต้นหอม ใส่ไข่ลวกตามชอบ",
-      ],
-      time: "15",
     },
   ];
 
@@ -189,16 +144,28 @@ export default function FamilyPage() {
         <div className="w-full">
           <div className="flex justify-between items-center py-5 bg-gray/10 w-full pad-main">
             <div className="flex space-x-3">
-              <img className="w-[72px] h-[72px] rounded-full" src={data.profile ?? Logo} alt="test" />
+              <img
+                className="w-[72px] h-[72px] rounded-full"
+                src={data.profile ?? Logo}
+                alt="test"
+              />
               <div className="flex flex-col">
                 <div className="text-body2">สวัสดี</div>
                 <div className="text-body1 font-bold">{data.famName}</div>
-                <div className="text-small">รหัสครอบครัว - {data.famCode}</div>
+                <div className="text-small">
+                  รหัสครอบครัว - {data.famCode}{" "}
+                  <i
+                    className="fa-solid fa-copy ml-2 cursor-pointer"
+                    onClick={copyFamCode}
+                  ></i>
+                </div>
               </div>
             </div>
             <i
               className="fa-solid fa-user-group text-h2 cursor-pointer"
-              onClick={() => navigate("/family/member", { state: { famData: data } })}
+              onClick={() =>
+                navigate("/family/member", { state: { famData: data } })
+              }
             ></i>
           </div>
 
@@ -221,12 +188,14 @@ export default function FamilyPage() {
           <div className="pad-main space-y-2 mb-2">
             <div className="flex justify-between text-center">
               <div className="text-body2 font-semibold">สำรวจเมนูใหม่</div>
-              <div className="text-small underline">ดูทั้งหมด</div>
+              <Link to="/menu" className="text-small underline">
+                ดูทั้งหมด
+              </Link>
             </div>
             <div className="flex w-full overflow-x-auto space-x-2 scrollbar-hide">
-              {menus.map((menu: IDataMenuCard, index: number) => (
+              {menu.map((values: IMenuData, index: number) => (
                 <div key={index} className="flex-shrink-0">
-                  <MenuCard data={menu} />
+                  <MenuCard data={values} />
                 </div>
               ))}
             </div>
@@ -244,6 +213,6 @@ export default function FamilyPage() {
           </div>
         </div>
       )}
-    </Fragment >
+    </Fragment>
   );
 }

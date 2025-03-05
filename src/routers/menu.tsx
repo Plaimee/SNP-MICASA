@@ -11,6 +11,7 @@ import JoinFamilyPage from "@/views/private/family/JoinFamilyPage";
 import FamilyMemberPage from "@/views/private/family/FamilyMemberPage";
 import ActivityPage from "@/views/private/family/activities/ActivityPage";
 import AllStatusPage from "@/views/private/status/AllStatusPage";
+import MenuPage from "@/views/private/family/menus/MenuPage";
 
 export const publicRoutes: RouteObject[] = [
   { path: "*", element: <></> },
@@ -29,5 +30,6 @@ export const privateRoutes: RouteObject[] = [
   { path: "/family/member", element: <FamilyMemberPage /> },
   { path: "/activity", element: <ActivityPage /> },
   { path: "/activity/status", element: <AllStatusPage /> },
+  { path: "/menu", element: <MenuPage /> },
   { path: "/profile", element: <ProfilePage /> },
 ];

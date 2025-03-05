@@ -103,6 +103,7 @@ export default function CreateFamilyPage() {
                       setFieldValue("famProfile.filename", file.name);
                     }
                   }}
+                  variant="circle"
                 />
                 <p className="text-red-main text-center pt-3">
                   {errors.famProfile?.file ? errors.famProfile.file : ""}

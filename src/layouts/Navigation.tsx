@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Logo from "@/assets/Logo.png";
+import Logo from "@/assets/Logo.svg";
 import { useAppDispatch } from "@/stores/hooks";
 import { logout } from "@/stores/reducers/authenReducer";
 
@@ -19,10 +19,10 @@ export default function Navigation() {
   ];
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    const user = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
     if (!user || !token) {
-      navigate('/');
+      navigate("/");
     }
   });
 
@@ -38,12 +38,6 @@ export default function Navigation() {
         <Link to="/home">
           <img className="flex w-10 h-10" src={Logo} alt="Logo" />
         </Link>
-        <div className={`${pathname === "/home" ? "flex w-60 border border-org-main rounded-md" : "hidden"}`} >
-          <input type="text" placeholder="ค้นหา" className="w-full rounded-md focus:outline-none p-1 ps-3 text-small" />
-          <button className="btn-bft btn-main">
-            <i className="fa-solid fa-magnifying-glass text-small text-white"></i>
-          </button>
-        </div>
 
         <button
           className="flex justify-center items-center text-center w-10 focus:outline-none"
@@ -67,26 +61,35 @@ export default function Navigation() {
 
       {/* Menu */}
       <div
-        className={`${showMenu
-          ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20"
-          : "hidden"
-          }`}
+        className={`${
+          showMenu
+            ? "absolute top-14 left-0 w-full bg-white shadow-md rounded-md z-20"
+            : "hidden"
+        }`}
         aria-hidden="false"
         onClick={handleOutsideClick} // ตรวจจับการคลิกที่พื้นหลัง
       >
         <div className="menu-container">
           <ul className="flex flex-col w-full space-y-4 p-4 text-gray-800">
-            {menu.map((item, i) =>
+            {menu.map((item, i) => (
               <li className="w-full" key={i}>
                 <Link
                   to={item.path}
-                  className={pathname === item.path ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2" : "text-black"}
-                  onClick={() => item.path === "/" && item.name === "ออกจากระบบ" ? dispatch(logout()) : setShowMenu(false)}
+                  className={
+                    pathname === item.path
+                      ? "flex w-full bg-org-main font-semibold text-white rounded-md p-2"
+                      : "text-black"
+                  }
+                  onClick={() =>
+                    item.path === "/" && item.name === "ออกจากระบบ"
+                      ? dispatch(logout())
+                      : setShowMenu(false)
+                  }
                 >
                   <div className="flex w-full">{item.name}</div>
                 </Link>
               </li>
-            )}
+            ))}
           </ul>
         </div>
       </div>

@@ -38,8 +38,9 @@ export interface IPostLikes {
 }
 
 export interface IPostComment {
-  id: number;
   user_id: number;
+  user_name: string;
+  user_profile: string;
   comment_text: string;
   created_at: string;
 }
