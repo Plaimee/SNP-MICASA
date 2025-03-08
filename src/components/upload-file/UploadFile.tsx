@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 export interface UploadFileProps {
   accept: string;
   clearImage: boolean;
+  initialImage?: string;
   onFileChange: (file: File | null) => void;
   variant?: "circle" | "square";
 }
@@ -12,9 +13,10 @@ export default function UploadFile({
   accept,
   onFileChange,
   clearImage,
+  initialImage = "",
   variant = "circle",
 }: UploadFileProps) {
-  const [imgSource, setImgSource] = useState<string | null>(null);
+  const [imgSource, setImgSource] = useState<string | null>(initialImage);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

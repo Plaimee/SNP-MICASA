@@ -12,3 +12,7 @@ export interface IStateLocationRegister {
 export interface IStateLocationJoinFamily {
   famCode: string;
 }
+
+export interface IStateLocationActivity {
+  fam_id: number;
+}

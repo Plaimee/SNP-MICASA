@@ -106,11 +106,6 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
-                {/* <div className="flex py-5 items-center">
-                <div className="border-t w-full border-gray"></div>
-                <span className="mx-4 text-gray">Content</span>
-                <div className="border-t w-full border-gray"></div>
-            </div> */}
                 <div className="flex w-full pad-main items-center">
                   <span className="w-full h-1 border-b border-gray opacity-50"></span>
                   <span className="px-2">หรือ</span>

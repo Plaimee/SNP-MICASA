@@ -6,6 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { familyRole } from "@/jsondata/global.json";
 import { useAppSelector } from "@/stores/hooks";
 import { userData } from "@/stores/reducers/authenReducer";
+import Logo from "@/assets/Logo.svg";
 
 export default function FamilyMemberPage() {
   const navigate = useNavigate();
@@ -32,9 +33,9 @@ export default function FamilyMemberPage() {
 
         <div className="flex flex-row w-full items-center space-x-3">
           <img
-            src={famData?.profile ?? ""}
+            src={famData?.profile ?? Logo}
             alt={famData?.famName ?? ""}
-            className="w-20 h-20 rounded-full"
+            className="w-20 h-20 shadow-sm rounded-full"
           />
           <div className="text-h1 font-semibold">{famData?.famName ?? ""}</div>
         </div>
@@ -52,7 +53,7 @@ export default function FamilyMemberPage() {
                   <img
                     src={mem.usrImg}
                     alt=""
-                    className="w-20 h-20 rounded-full"
+                    className="w-20 h-20 object-cover rounded-full"
                   />
                   <div className="flex flex-col">
                     <h3>{mem.nickName}</h3>

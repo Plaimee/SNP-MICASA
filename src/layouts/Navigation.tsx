@@ -33,7 +33,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="sticky top-0 pb-3 shadow-sm bg-white">
+    <nav className="sticky top-0 pb-3 shadow-sm bg-white z-50">
       <div className="flex w-full justify-between pad-main">
         <Link to="/home">
           <img className="flex w-10 h-10" src={Logo} alt="Logo" />

@@ -9,9 +9,9 @@ import CreateFamilyPage from "@/views/private/family/CreateFamilyPage";
 import ProfilePage from "@/views/private/profile/ProfilePage";
 import JoinFamilyPage from "@/views/private/family/JoinFamilyPage";
 import FamilyMemberPage from "@/views/private/family/FamilyMemberPage";
-import ActivityPage from "@/views/private/family/activities/ActivityPage";
-import AllStatusPage from "@/views/private/status/AllStatusPage";
+import StatusPage from "@/views/private/family/status/StatusPage";
 import MenuPage from "@/views/private/family/menus/MenuPage";
+import ActivityPage from "@/views/private/family/activities/ActivityPage";
 
 export const publicRoutes: RouteObject[] = [
   { path: "*", element: <></> },
@@ -28,8 +28,8 @@ export const privateRoutes: RouteObject[] = [
   { path: "/family/create", element: <CreateFamilyPage /> },
   { path: "/family/join", element: <JoinFamilyPage /> },
   { path: "/family/member", element: <FamilyMemberPage /> },
+  { path: "/status", element: <StatusPage /> },
   { path: "/activity", element: <ActivityPage /> },
-  { path: "/activity/status", element: <AllStatusPage /> },
   { path: "/menu", element: <MenuPage /> },
   { path: "/profile", element: <ProfilePage /> },
 ];

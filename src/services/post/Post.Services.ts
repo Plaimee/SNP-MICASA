@@ -11,7 +11,7 @@ export async function ReadAll() {
 
 export async function ReadById(data: number) {
   try {
-    const response = await gateway.get(`/post/${data}`);
+    const response = await gateway.post(`/post/${data}`);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -23,6 +23,26 @@ export async function CreatePost(data: FormData) {
     const response = await gateway.post(`/post/create`, data, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function UpdatePost(data: FormData, postId: number) {
+  try {
+    const response = await gateway.post(`/post/${postId}/update`, data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function DeletePost(postId: number, user_id: number) {
+  try {
+    const response = await gateway.post(`/post/delete/${postId}`, { user_id });
     return response.data;
   } catch (error) {
     console.log(error);

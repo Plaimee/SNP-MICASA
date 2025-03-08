@@ -1,8 +1,6 @@
 import { IPostData } from "@/@types/post/IPost";
 import FeedCard from "@/components/feed-card/FeedCard";
-import LeaderCard, {
-  IDataLeaderCard,
-} from "@/components/leader-card/LeaderCard";
+import { GuestLeaderCard, IDataLeaderCard } from "@/components/leader-card/LeaderCard";
 import { ReadAll } from "@/services/post/Post.Services";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -111,7 +109,7 @@ export default function GuestPage() {
         <div className="wrap-items-center">
           {leaders.map((leader: IDataLeaderCard, index: number) => (
             <div key={index} className="w-full">
-              <LeaderCard data={leader} />
+              <GuestLeaderCard data={leader} />
             </div>
           ))}
         </div>

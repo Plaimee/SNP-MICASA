@@ -1,109 +1,229 @@
-import { IDataMenuCard, MenuDetailCard } from "@/components/menu-card/MenuCard";
-import Dropdown from "@/components/dropdown/Dropdown";
-import { Link, useNavigate } from "react-router-dom";
-import { Formik, Form } from "formik";
-import { IOptionDDL } from "@/@types/global";
-import * as Yup from "Yup";
-import { IFormActivityDuty } from "@/@types/family/IFamily";
+import { IActivityData } from "@/@types/activity/IActivity";
+import {
+  ReadActivityById,
+  UpdateActivity,
+} from "@/services/activity/Activity.Services";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
+import { menu_category } from "@/jsondata/global.json";
+import TextField from "@/components/text-field/TextField";
+import { userData } from "@/stores/reducers/authenReducer";
+import { useAppSelector } from "@/stores/hooks";
+import { format } from "date-fns";
+import AlertMessage from "@/components/notification/AlertMessage";
 
 export default function ActivityPage() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [activity, setActivity] = useState<IActivityData | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
+  const location = useLocation();
+  const { act_id } = location.state || {};
+  const [timer, setTimer] = useState<number>(0);
+  const [customTime, setCustomTime] = useState<number>(0);
+  const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
+  const user = useAppSelector(userData);
   const navigate = useNavigate();
-  const menus = [
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "โจ๊ก สูตรเร่งรัด",
-      menuType: "เมนูอาหารเช้า",
-      description:
-        "อาหารเช้าชนิด ข้าวต้มบดละเอียด นิยมใช้ข้าวสวยต้มกับน้ำซุปจนเนียน สามารถใส่เนื้อสัตว์ เช่น  หมูสับ  ตับ  หรือไข่ลวก  และปรุงรสด้วยซีอิ๊ว เกลือ โรยขิงและต้นหอมเหมาะสำหรับมื้อเช้าเพราะย่อยง่ายและอิ่มท้อง",
-      ingredient: [
-        "ข้าวสวย 1 ถ้วย",
-        "น้ำซุป (หมู/ไก่) 2-3 ถ้วย",
-        "หมูสับ 100 กรัม",
-        "ขิงซอย, ต้นหอมซอย, และไข่ลวก",
-        "ซีอิ๊วขาวหรือเกลือ",
-      ],
-      htCook: [
-        "ต้มข้าวสวยในน้ำซุปจนเนื้อเนียนเป็นโจ๊ก",
-        "ปั้นหมูสับเป็นก้อน ใส่ลงไปต้มจนสุก",
-        "ปรุงรสด้วยซีอิ๊วขาวหรือเกลือ",
-        "ตักใส่ชาม โรยขิง ต้นหอม ใส่ไข่ลวกตามชอบ",
-      ],
-      time: "15",
+
+  useEffect(() => {
+    if (act_id) {
+      readActivityById(act_id);
+    }
+  }, [act_id]);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+        },
+        (error) => console.error("Error getting location:", error)
+      );
+    }
+  }, []);
+
+  const handleStartTimer = () => {
+    if (customTime > 0) {
+      setTimer(customTime);
+      setIsTimerRunning(true);
+    }
+  };
+
+  async function readActivityById(act_id: number) {
+    setLoading(true);
+    const res = await ReadActivityById(act_id);
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      setActivity(res.data);
+    }
+  }
+
+  const handleComplete = useCallback(
+    async (status: "2" | "3") => {
+      if (!activity) return;
+
+      const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+      const formData = new FormData();
+      formData.append("completed_at", timestamp);
+      formData.append("status_type", status);
+
+      try {
+        await UpdateActivity(activity.id, formData);
+        setActivity((prev) =>
+          prev
+            ? { ...prev, completed_at: timestamp, status_type: status }
+            : null
+        );
+        setIsTimerRunning(false);
+
+        AlertMessage({
+          type: "success",
+          title: "สำเร็จ!",
+          text: status === "2" ? "บันทึกสำเร็จแล้ว" : "หมดเวลา",
+          showConfirmButton: true,
+          confirmButtonText: "ตกลง",
+        }).then(() => {
+          navigate("/family");
+        });
+      } catch (error) {
+        console.error("Error updating activity:", error);
+      }
     },
-  ];
-  const duties = [
-    { id: "1", name: "เตรียมวัตถุดิบ" },
-    { id: "2", name: "ปรุงอาหาร" },
-    { id: "3", name: "ตกแต่งหน้าตาอาหาร" },
-  ];
+    [activity, navigate]
+  );
 
-  function validate() {
-    return Yup.object({
-      famDuty: Yup.string().required("กรุณาเลือกหน้าที่"),
-    });
-  }
-
-  async function submitForm(values: IFormActivityDuty) {
-    const data: IFormActivityDuty = {
-      famDuty: values.famDuty,
-    };
-    console.log(data);
-    navigate("/home");
-  }
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isTimerRunning && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0 && isTimerRunning) {
+      AlertMessage({
+        type: "error",
+        title: "⏳ เวลาหมดแล้ว!",
+        text: "ระบบบันทึกสถานะเป็นหมดเวลา",
+        showConfirmButton: true,
+        confirmButtonText: "ตกลง",
+      }).then(() => {
+        handleComplete("3");
+      });
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning, timer, handleComplete]);
 
   return (
-    <div className="pad-main space-y-2 mb-3">
-      <Link
-        to="/family"
-        className="flex w-fit items-center space-x-3 previous-page"
-      >
-        <i className="fa-solid fa-arrow-left text-h2"></i>
-        <div className="text-body2 font-semibold">ย้อนกลับ</div>
-      </Link>
+    <Fragment>
+      {loading ? (
+        <i className="fa-solid fa-spinner animate-spin text-[60px]" />
+      ) : activity?.id === 0 ? (
+        <div className="text-gray-500">ไม่พบกิจกรรมในระบบ</div>
+      ) : (
+        <div className="flex flex-wrap pad-main gap-y-3">
+          <Link
+            to="/status"
+            className="flex w-full items-center space-x-3 previous-page"
+          >
+            <i className="fa-solid fa-arrow-left text-h2"></i>
+            <div className="text-body2 font-semibold">ย้อนกลับ</div>
+          </Link>
 
-      <div className="flex w-full text-center justify-center text-h2 font-semibold">
-        รายละอียด
-      </div>
-      <div className="wrap-items-center space-y-2">
-        {menus.map((menu: IDataMenuCard, index: number) => (
-          <div key={index} className="w-full">
-            <MenuDetailCard data={menu} />
-          </div>
-        ))}
-      </div>
-      <Formik
-        enableReinitialize
-        validationSchema={validate}
-        initialValues={{ famDuty: "" }}
-        onSubmit={(values: IFormActivityDuty) => {
-          submitForm(values);
-        }}
-      >
-        {({ setFieldValue, values, touched, errors }) => (
-          <Form>
-            <div className="w-full mb-3">
-              <Dropdown
-                title="เลือกหน้าที่ของคุณ"
-                options={duties}
-                value={duties.filter((g) => g.id === values.famDuty)}
-                optionValue="id"
-                optionLabel={(z: IOptionDDL) => z?.name}
-                onChange={(e: IOptionDDL) => setFieldValue("famDuty", e.id)}
-                touched={touched.famDuty}
-                error={errors.famDuty}
-              />
+          <div className="flex flex-col flex-wrap w-full gap-y-3">
+            <img
+              src={activity?.menu.menu_images}
+              alt={activity?.menu.menu_title}
+              className="w-full h-48 object-cover rounded-md"
+            />
+            <div className="flex gap-x-3 items-center">
+              <div className="text-h1 font-semibold">
+                {activity?.menu.menu_title}
+              </div>
+              <div className="text-body3">
+                (
+                {
+                  menu_category.find(
+                    (f) => f.id === activity?.menu.menu_category
+                  )?.name
+                }
+                )
+              </div>
             </div>
-            <button
-              type="submit"
-              className="btn-bfl btn-main cursor-not-allowed"
-            >
-              เริ่มการทำอาหาร
-            </button>
-          </Form>
-        )}
-      </Formik>
-    </div>
+
+            <div className="text-body3 font-semibold">ผู้รับหน้าที่</div>
+            <div className="flex w-full gap-x-3 items-center p-3 bg-org-main/10 rounded-md">
+              <img
+                src={activity?.member.fam_mem_image}
+                alt={activity?.member.fam_mem_nickName}
+                className="w-12 rounded-md"
+              />
+              <div className="text-body2 font-semibold">
+                {activity?.member.fam_mem_nickName}
+              </div>
+            </div>
+
+            {userLocation && (
+              <button
+                onClick={() =>
+                  window.open(
+                    `https://www.google.com/maps?q=${userLocation.lat},${userLocation.lon}`,
+                    "_blank"
+                  )
+                }
+                className="btn-main btn-bfl"
+              >
+                <i className="fa-solid fa-map-marker-alt mr-2"></i>
+                ค้าหาร้านค้า
+              </button>
+            )}
+
+            <div className="flex flex-col items-center gap-y-2 rounded-md">
+              {isTimerRunning && (
+                <div className="text-h1 font-semibold">⏳ {timer} วินาที</div>
+              )}
+
+              {!isTimerRunning && (
+                <div className="w-full">
+                  <TextField
+                    label="ตั้งเวลาทำกิจกรรม"
+                    name="setTimer"
+                    type="number"
+                    value={String(customTime)}
+                    onChange={(e) => setCustomTime(Number(e.target.value))}
+                    placeHolder="ตั้งเวลา (วินาที)"
+                  />
+                  <button
+                    onClick={handleStartTimer}
+                    disabled={
+                      !activity?.member.fam_mem_id ||
+                      customTime <= 0 ||
+                      String(user?.id) !== activity?.member.fam_mem_id
+                    }
+                    className="btn-main btn-bfl mt-2"
+                  >
+                    เริ่มจับเวลา
+                  </button>
+                </div>
+              )}
+
+              {isTimerRunning && (
+                <button
+                  onClick={() => handleComplete("2")}
+                  disabled={String(user?.id) !== activity?.member.fam_mem_id}
+                  className="btn-main btn-bfl"
+                >
+                  เสร็จสิ้น
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </Fragment>
   );
 }

@@ -1,13 +1,9 @@
-import StatusCard, {
-  IDataStatusCard,
-} from "@/components/status-card/StatusCard";
+import StatusCard from "@/components/status-card/StatusCard";
 import MenuCard from "@/components/menu-card/MenuCard";
 import { Fragment, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "@/assets/Logo.svg";
-import MemberList, {
-  IDataMemberList,
-} from "@/components/member-list/MemberList";
+import MemberList from "@/components/member-list/MemberList";
 import { ReadFamily } from "@/services/family/Family.Services";
 import { IFamilyData } from "@/@types/family/IFamily";
 import { useAppSelector } from "@/stores/hooks";
@@ -15,6 +11,9 @@ import { userData } from "@/stores/reducers/authenReducer";
 import AlertMessage from "@/components/notification/AlertMessage";
 import { IMenuData } from "@/@types/menu/IMenu";
 import { ReadMenu } from "@/services/menu/Menu.Services";
+import { IActivityData } from "@/@types/activity/IActivity";
+import { ReadActivity } from "@/services/activity/Activity.Services";
+import { status_type } from "@/jsondata/global.json";
 
 export default function FamilyPage() {
   const user = useAppSelector(userData);
@@ -22,8 +21,16 @@ export default function FamilyPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<IFamilyData | null>(null);
   const [menu, setMenu] = useState<IMenuData[]>([]);
+  const [activity, setActivity] = useState<IActivityData[]>([]);
   const location = useLocation();
   const { famCode } = location.state || {};
+
+  const statusMap = Object.fromEntries(
+    status_type.map((item) => [
+      item.id,
+      item.type as "pending" | "success" | "failed",
+    ])
+  );
 
   useEffect(() => {
     readMenu();
@@ -34,6 +41,22 @@ export default function FamilyPage() {
       readFamily(famCode ?? user?.famCode);
     }
   }, [famCode, user]);
+
+  useEffect(() => {
+    if (data?.id) {
+      readActivity(data.id);
+    }
+  }, [data]);
+
+  async function readActivity(fam_id: number) {
+    setLoading(true);
+    const res = await ReadActivity(fam_id);
+
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      setActivity(res.data);
+    }
+  }
 
   async function readFamily(famCode: string) {
     setLoading(true);
@@ -62,53 +85,6 @@ export default function FamilyPage() {
       });
     }
   };
-
-  const status = [
-    {
-      id: "pending",
-      title: "กำลังดำเนินการอยู่",
-      description: "Pending",
-      amount: 0,
-      path: "/activity/pending",
-    },
-    {
-      id: "success",
-      title: "รายการที่สำเร็จ",
-      description: "Success",
-      amount: 0,
-      path: "/activity/success",
-    },
-    {
-      id: "failed",
-      title: "รายการไม่สำเร็จ",
-      description: "Failed",
-      amount: 0,
-      path: "/activity/failed",
-    },
-  ];
-
-  const members = [
-    {
-      id: 1,
-      nickName: "อาจารย์เบียร์",
-      actAmount: 17,
-    },
-    {
-      id: 2,
-      nickName: "อาจารย์แดง",
-      actAmount: 16,
-    },
-    {
-      id: 3,
-      nickName: "อาจารย์เบิ้ม",
-      actAmount: 15,
-    },
-    {
-      id: 4,
-      nickName: "อาจารย์คง",
-      actAmount: 14,
-    },
-  ];
 
   return (
     <Fragment>
@@ -145,7 +121,7 @@ export default function FamilyPage() {
           <div className="flex justify-between items-center py-5 bg-gray/10 w-full pad-main">
             <div className="flex space-x-3">
               <img
-                className="w-[72px] h-[72px] rounded-full"
+                className="w-[72px] h-[72px] rounded-full shadow-sm"
                 src={data.profile ?? Logo}
                 alt="test"
               />
@@ -172,16 +148,25 @@ export default function FamilyPage() {
           <div className="pad-main mb-2">
             <div className="flex justify-between text-center mb-2">
               <div className="text-body2 font-semibold">สถานะกิจกรรม</div>
-              <Link to="/activity" className="text-small underline">
+              <Link to="/status" className="text-small underline">
                 ดูทั้งหมด
               </Link>
             </div>
             <div className="wrap-items-center space-y-2">
-              {status.map((status: IDataStatusCard, index: number) => (
-                <div key={index} className="w-full">
-                  <StatusCard data={status} />
-                </div>
-              ))}
+              {Object.keys(statusMap).map((statusCode) => {
+                const filteredActivities = activity.filter((act) => {
+                  return String(act.status_type) === String(statusCode);
+                });
+
+                return (
+                  <StatusCard
+                    key={statusCode}
+                    data={{ status_type: statusCode } as IActivityData}
+                    count={filteredActivities.length ?? 0}
+                    type={statusMap[statusCode]}
+                  />
+                );
+              })}
             </div>
           </div>
 
@@ -195,7 +180,7 @@ export default function FamilyPage() {
             <div className="flex w-full overflow-x-auto space-x-2 scrollbar-hide">
               {menu.map((values: IMenuData, index: number) => (
                 <div key={index} className="flex-shrink-0">
-                  <MenuCard data={values} />
+                  <MenuCard data={values} fam={data} />
                 </div>
               ))}
             </div>
@@ -204,9 +189,9 @@ export default function FamilyPage() {
           <div className="pad-main space-y-2 mb-2">
             <div className="text-body2 font-semibold">สถิติการทำกิจกรรม</div>
             <div className="wrap-items-center space-y-2">
-              {members.map((status: IDataMemberList, index: number) => (
+              {activity.map((values: IActivityData, index: number) => (
                 <div key={index} className="w-full">
-                  <MemberList data={status} />
+                  <MemberList data={values} />
                 </div>
               ))}
             </div>

@@ -6,40 +6,67 @@ import Dropdown from "../dropdown/Dropdown";
 import { IOptionDDL } from "@/@types/global";
 import * as Yup from "Yup";
 import { ICreateActivity } from "@/@types/activity/IActivity";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/stores/hooks";
 import { userData } from "@/stores/reducers/authenReducer";
-import { IFamilyStateLocation } from "@/@types/IStateLocation";
-import { IFamilyMember } from "@/@types/family/IFamily";
+import { IFamilyData, IFamilyMember } from "@/@types/family/IFamily";
+import { CreateActivity } from "@/services/activity/Activity.Services";
+import AlertMessage from "../notification/AlertMessage";
 
 export interface MenuCardProps {
   data: IMenuData;
-  mode?: "default" | "detail";
+  fam: IFamilyData | null;
 }
 
-export default function MenuCard({ data }: MenuCardProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
+export default function MenuCard({ data, fam }: MenuCardProps) {
   const user = useAppSelector(userData);
-  const { famData }: IFamilyStateLocation = location.state || {};
-  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [famMember, setFamMember] = useState<IFamilyMember[]>([]);
+  const [showDetail, setShowDetail] = useState<IFamilyData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (famData === null) {
-      navigate("/family");
+    if (fam) {
+      setFamMember(fam.famMember);
     }
-  }, [famData, navigate]);
+  }, [fam]);
 
   const validate = Yup.object().shape({
     purchase_type: Yup.string().required("กรุณาเลือกประเภทกิจกรรม"),
     fam_mem_id: Yup.string().required("กรุณาเลือกผู้ที่จะทำกิจกรรม"),
   });
 
-  async function submitForm(values: ICreateActivity) {
+  function createForm(values: ICreateActivity) {
+    const form = new FormData();
+
+    form.append("user_id", values.user_id.toString());
+    form.append("fam_id", values.fam_id.toString());
+    form.append("fam_mem_id", values.fam_mem_id);
+    form.append("fam_mem_nickName", values.fam_mem_nickName);
+    form.append("fam_mem_image", values.fam_mem_image);
+    form.append("menu_id", values.menu_id.toString());
+    form.append("menu_title", values.menu_title);
+    form.append("menu_images", values.menu_images);
+    form.append("menu_category", values.menu_category);
+    form.append("purchase_type", values.purchase_type);
+    form.append("status_type", values.status_type);
+
+    return form;
+  }
+
+  async function submitForm(values: ICreateActivity, resetForm: () => void) {
+    const data = createForm(values);
     setLoading(true);
-    console.log(values);
+    const res = await CreateActivity(data);
     setLoading(false);
+
+    if (res && res.statusCode === 201 && res.taskStatus) {
+      AlertMessage({
+        type: "success",
+        title: res.message,
+      });
+
+      resetForm();
+      setShowDetail(null);
+    }
   }
 
   return (
@@ -60,12 +87,12 @@ export default function MenuCard({ data }: MenuCardProps) {
       </div>
       <button
         className="btn-bfl bg-org-main text-body3 text-white font-medium"
-        onClick={() => setShowDetail(true)}
+        onClick={() => setShowDetail(fam)}
       >
         ดูรายละเอียด
       </button>
 
-      {showDetail && (
+      {showDetail !== null && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-white p-4 rounded-md shadow-lg w-11/12 max-w-md relative">
             <MenuDetailCard data={data} />
@@ -75,12 +102,19 @@ export default function MenuCard({ data }: MenuCardProps) {
               initialValues={{
                 user_id: user?.id ?? 0,
                 menu_id: data.id,
-                fam_id: famData?.id ?? 0,
+                menu_title: data.menu_title ?? "",
+                menu_images: data.menu_image ?? "",
+                menu_category: data.menu_category ?? "",
+                fam_id: fam?.id ?? 0,
                 fam_mem_id: "",
+                fam_mem_nickName: "",
+                fam_mem_image: "",
                 purchase_type: "",
                 status_type: "1",
               }}
-              onSubmit={(values: ICreateActivity) => submitForm(values)}
+              onSubmit={(values: ICreateActivity, { resetForm }) =>
+                submitForm(values, resetForm)
+              }
             >
               {({ setFieldValue, values, touched, errors }) => (
                 <Form className="flex flex-wrap gap-y-3">
@@ -101,35 +135,28 @@ export default function MenuCard({ data }: MenuCardProps) {
                     />
                   </div>
                   <div className="w-full">
-                    {famData &&
-                      famData?.famMember?.length > 0 &&
-                      famData?.famMember.map((mem: IFamilyMember) => (
-                        <Dropdown
-                          key={mem.id}
-                          title="เลือกผู้ที่จะทำกิจกรรม"
-                          options={famData.famMember}
-                          value={
-                            famData.famMember.find(
-                              (m) => m.id === values.fam_mem_id
-                            ) ?? null
-                          }
-                          optionValue="id"
-                          optionLabel={(m: IFamilyMember) =>
-                            m?.nickName ?? "Unknown"
-                          }
-                          onChange={(e: IFamilyMember) =>
-                            setFieldValue("fam_mem_id", e.id)
-                          }
-                          touched={touched.fam_mem_id}
-                          error={errors.fam_mem_id}
-                        />
-                      ))}
+                    <Dropdown
+                      title="เลือกผู้ทำกิจกรรม"
+                      options={famMember}
+                      value={famMember.filter(
+                        (m) => m.id === values.fam_mem_id
+                      )}
+                      optionValue="id"
+                      optionLabel={(z: IFamilyMember) => z?.nickName}
+                      onChange={(e: IFamilyMember) => {
+                        setFieldValue("fam_mem_id", e.id);
+                        setFieldValue("fam_mem_nickName", e.nickName);
+                        setFieldValue("fam_mem_image", e.usrImg);
+                      }}
+                      touched={touched.fam_mem_id}
+                      error={errors.fam_mem_id}
+                    />
                   </div>
 
                   <div className="w-full flex gap-x-3">
                     <button
                       className="btn-bfl btn-sub"
-                      onClick={() => setShowDetail(false)}
+                      onClick={() => setShowDetail(null)}
                     >
                       ยกเลิก
                     </button>

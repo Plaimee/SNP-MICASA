@@ -11,6 +11,12 @@ export interface IFormCreatePost {
   postLike: string;
 }
 
+export interface IFormPostUpdate {
+  user_id: number;
+  post_desc: string;
+  post_images: IFile;
+}
+
 export interface IPostData {
   id: number;
   user: IPostUser;

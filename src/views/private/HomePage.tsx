@@ -3,9 +3,7 @@ import { IOptionDDL } from "@/@types/global";
 import { IFormCreatePost, IPostData } from "@/@types/post/IPost";
 import Dropdown from "@/components/dropdown/Dropdown";
 import FeedCard from "@/components/feed-card/FeedCard";
-import LeaderCard, {
-  IDataLeaderCard,
-} from "@/components/leader-card/LeaderCard";
+import LeaderCard from "@/components/leader-card/LeaderCard";
 import { useAppSelector } from "@/stores/hooks";
 import { userData } from "@/stores/reducers/authenReducer";
 import { ChangeEvent, Fragment, useEffect, useState } from "react";
@@ -15,7 +13,10 @@ import UploadFile from "@/components/upload-file/UploadFile";
 import { TextAreaField } from "@/components/text-field/TextField";
 import { CreatePost, ReadAll, ReadById } from "@/services/post/Post.Services";
 import AlertMessage from "@/components/notification/AlertMessage";
-import { useLocation } from "react-router-dom";
+import { IActivityData } from "@/@types/activity/IActivity";
+import { ReadActivity } from "@/services/activity/Activity.Services";
+import { IFamilyData } from "@/@types/family/IFamily";
+import { ReadFamily } from "@/services/family/Family.Services";
 
 export default function HomePage() {
   const [tabView, setTabView] = useState<number>(1);
@@ -58,11 +59,26 @@ export default function HomePage() {
 
 export function AllPostPage() {
   const [loading, setLoading] = useState<boolean>(false);
+  const [activity, setActivity] = useState<IActivityData[]>([]);
+  const [fam, setFam] = useState<IFamilyData | null>(null);
+  const user = useAppSelector(userData);
   const [data, setData] = useState<IPostData[]>([]);
 
   useEffect(() => {
     readAllPost();
   }, []);
+
+  useEffect(() => {
+    if (fam?.id) {
+      readActivity(fam.id);
+    }
+  }, [fam]);
+
+  useEffect(() => {
+    if (fam?.famCode || user?.famCode) {
+      readFamily(fam?.famCode ?? user?.famCode ?? "");
+    }
+  }, [fam?.famCode, user?.famCode]);
 
   async function readAllPost() {
     setLoading(true);
@@ -82,29 +98,24 @@ export function AllPostPage() {
     }
   }
 
-  const leaders = [
-    {
-      id: 1,
-      rank: 1,
-      activity: 337,
-      famName: "ครอบครัวจุ๊มเหม่ง",
-      img: "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 2,
-      rank: 2,
-      activity: 312,
-      famName: "ครอบครัวไข่ขาว",
-      img: "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 3,
-      rank: 3,
-      activity: 302,
-      famName: "ครอบครัวกลูต้า",
-      img: "https://plus.unsplash.com/premium_photo-1661475916373-5aaaeb4a5393?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  ];
+  async function readFamily(famCode: string) {
+    setLoading(true);
+    const res = await ReadFamily(famCode);
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      setFam(res.data);
+    }
+  }
+
+  async function readActivity(fam_id: number) {
+    setLoading(true);
+    const res = await ReadActivity(fam_id);
+
+    setLoading(false);
+    if (res && res.statusCode === 200 && res.taskStatus) {
+      setActivity(res.data);
+    }
+  }
 
   return (
     <Fragment>
@@ -127,12 +138,12 @@ export function AllPostPage() {
 
       <div className="space-y-2">
         <h3 className="text-body2">ครอบครัวที่ทำกิจกรรมมากที่สุดในเดือนนี้</h3>
-        <div className="w-full">
-          {leaders.map((leader: IDataLeaderCard, index: number) => (
-            <div key={index} className="w-full">
-              <LeaderCard data={leader} />
-            </div>
-          ))}
+        <div
+          className={`w-full ${
+            activity.length > 3 ? "max-h-60 overflow-y-auto" : ""
+          }`}
+        >
+          <LeaderCard data={fam} act={activity} />
         </div>
       </div>
     </Fragment>
@@ -144,14 +155,12 @@ export function PostByUserId() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<IPostData[]>([]);
-  const location = useLocation();
-  const { user_id } = location.state || {};
 
   useEffect(() => {
-    if (user_id || user?.id) {
-      readPost(user_id ?? user?.id);
+    if (user?.id) {
+      readPost(user?.id);
     }
-  }, [user_id, user]);
+  }, [user]);
 
   async function readPost(user_id: number) {
     setLoading(true);
@@ -281,7 +290,7 @@ export function UploadPost({ onClose }: { onClose: () => void }) {
                   <div className="flex flex-row gap-x-2">
                     <img
                       src={user?.profile}
-                      alt=""
+                      alt={user?.fName}
                       className="w-11 h-11 rounded-full object-cover"
                     />
                     <div className="flex flex-col gap-y-1">
